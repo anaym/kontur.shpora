@@ -8,7 +8,7 @@ using SpurRoguelike.Core.Views;
 namespace DummyPlayer
 {
     //TODO: fix Equals
-    public class MapNode : Node
+    public class MapNode : INode, IComparer<MapNode>
     {
         public readonly Location Location;
         public Map Map;
@@ -20,26 +20,14 @@ namespace DummyPlayer
             Cost = cost;
         }
 
-        public override IEnumerable<IEdge> OutcomingEdges => Map.GetNearly(Location).Select(to => new MapEdge(this, to));
+        public IEnumerable<IEdge> OutcomingEdges => Map.GetNearly(Location).Select(to => new MapEdge(this, to, (UDouble)to.Cost));
 
         public double Cost;
 
-        public override bool Equals(Node other) => Equals((object) other);
+        public int Compare(MapNode x, MapNode y) => 0;
 
-        public override int GetHashCode() => Location.GetHashCode();
+        public override bool Equals(object other) => (other as MapNode)?.Location.Equals(Location) ?? false;
 
-    }
 
-    public class MapEdge : IEdge
-    {
-        public MapEdge(MapNode from, MapNode to)
-        {
-            From = from;
-            To = to;
-        }
-
-        public Node From { get; }
-        public Node To { get; }
-        public double Cost => (To as MapNode)?.Cost ?? -1;
     }
 }

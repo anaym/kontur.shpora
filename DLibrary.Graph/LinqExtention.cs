@@ -9,8 +9,9 @@ namespace DLibrary.Graph
     {
         public static T FirstOr<T>(this IEnumerable<T> enumerable, T def)
         {
-            var enumerator = enumerable.GetEnumerator();
-            return enumerator.MoveNext() ? enumerator.Current : def;
+            var enumerator = enumerable?.GetEnumerator();
+            var exist = enumerator?.MoveNext() ?? false;
+            return exist ? enumerator.Current : def;
 
         }
     }

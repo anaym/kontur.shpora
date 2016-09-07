@@ -1,10 +1,8 @@
 ﻿namespace DLibrary.Graph
 {
-    public interface IEdge<out TNode>
-        where TNode : Node
+    public interface IEdge
     {
-        TNode From { get; }
-        TNode To { get; }
-        double Cost { get; }
+        INode From { get; }
+        INode To { get; }
     }
 }

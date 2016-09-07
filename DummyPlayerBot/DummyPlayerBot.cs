@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using DLibrary.Graph;
 using SpurRoguelike.Core;
 using SpurRoguelike.Core.Primitives;
 using SpurRoguelike.Core.Views;
@@ -47,18 +48,18 @@ namespace DummyPlayer
             
             var map = new Map(levelView,(k > 30 ? (Location?)new Location(x, y) : null));
             var now = map[levelView.Player.Location];
-            var path = now.BestPathWithPositives(map.Exit);
+            var path = new PositiveWeighesPathFinder(now, map.Exit).FindPath();
 
             if (path == null)
                 return Turn.None;
 
-            var next = path[1] as MapNode;
+            var next = path.Skip(1).First() as MapNode;
             var offset = new Offset(next.Location.X - now.Location.X, next.Location.Y - now.Location.Y);
 
             var nearbyMonster =
                 levelView.Monsters.FirstOrDefault(m => IsInAttackRange(levelView.Player.Location, m.Location));
             
-            Thread.Sleep(k*10);
+            //Thread.Sleep(k*10);
 
             if (nearbyMonster.HasValue && false)
                 return Turn.Attack(nearbyMonster.Location - levelView.Player.Location);

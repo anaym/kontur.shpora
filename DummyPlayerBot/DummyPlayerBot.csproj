@@ -43,6 +43,7 @@
     <Compile Include="DummyPlayerBot.cs" />
     <Compile Include="LocationExtension.cs" />
     <Compile Include="Map.cs" />
+    <Compile Include="MapEdge.cs" />
     <Compile Include="MapNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
