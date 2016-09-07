@@ -104,6 +104,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DummyPlayerBot\DummyPlayerBot.csproj">
+      <Project>{85ae63cb-2603-48af-905a-20ad6c630c17}</Project>
+      <Name>DummyPlayerBot</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SpurRoguelike.Core\SpurRoguelike.Core.csproj">
       <Project>{a9981d1c-3429-4729-b7f7-7839cc30be00}</Project>
       <Name>SpurRoguelike.Core</Name>

@@ -7,6 +7,7 @@ using SpurRoguelike.ConsoleGUI.TextScreen;
 using SpurRoguelike.Content;
 using SpurRoguelike.Core;
 using SpurRoguelike.Generators;
+using DummyPlayer;
 
 namespace SpurRoguelike
 {
@@ -33,6 +34,14 @@ namespace SpurRoguelike
                 .SetDefault(0)
                 .WithDescription("Seed for level generation");
 
+            //atolstov.com
+            commandLineParser
+                .Setup(options => options.Debug)
+                .As('d')
+                .SetDefault(false)
+                .WithDescription("Debug mode");
+            //end
+
             commandLineParser
                 .Setup(options => options.LevelCount)
                 .As('n')
@@ -56,9 +65,18 @@ namespace SpurRoguelike
 
             var gui = new ConsoleGui(new TextScreen());
 
-            var playerController = options.PlayerController == null ?
-                new ConsolePlayerController(gui) :
-                BotLoader.LoadPlayerController(options.PlayerController);
+            //atolstov.com
+            //var playerController = options.PlayerController == null ?
+            //    new ConsolePlayerController(gui) :
+            //    BotLoader.LoadPlayerController(options.PlayerController);
+            var playerController = options.Debug ? 
+                new DummyPlayerBot() : 
+                (
+                    options.PlayerController == null ?
+                    new ConsolePlayerController(gui) :
+                    BotLoader.LoadPlayerController(options.PlayerController)
+                );
+            //end
 
             var engine = new Engine(options.PlayerName, playerController, levels.First(), new ConsoleRenderer(gui), new ConsoleEventReporter(gui));
 
@@ -91,7 +109,7 @@ namespace SpurRoguelike
 
             var settings = FillDefaultSettings();
             
-            for (int i = 0; i < count - 1; i++)
+            for (int i = 0; i < count - 1/* &&false*/; i++)
             {
                 levels.Add(levelGenerator.Generate(settings, monsterClasses, itemClasses));
 
@@ -196,6 +214,8 @@ namespace SpurRoguelike
             public int Seed { get; set; }
 
             public int LevelCount { get; set; }
+
+            public bool Debug { get; set; }
         }
     }
 }
