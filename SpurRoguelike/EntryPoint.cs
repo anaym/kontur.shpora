@@ -70,7 +70,7 @@ namespace SpurRoguelike
             //    new ConsolePlayerController(gui) :
             //    BotLoader.LoadPlayerController(options.PlayerController);
             var playerController = options.Debug ? 
-                new DummyPlayerBot() : 
+                new DummyPlayer.DummyPlayerBot() : 
                 (
                     options.PlayerController == null ?
                     new ConsolePlayerController(gui) :

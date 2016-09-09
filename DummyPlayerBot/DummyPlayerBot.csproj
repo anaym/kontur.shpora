@@ -41,10 +41,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DummyPlayerBot.cs" />
+    <Compile Include="Enviroment\CostExtractors\DangerEnemyCostExtractor.cs" />
+    <Compile Include="Enviroment\CostExtractors\DistanceFromEnemiesCostExtractor.cs" />
+    <Compile Include="Enviroment\CostExtractors\EnviromentDependentCostExtractor.cs" />
+    <Compile Include="Enviroment\CostExtractors\ICostExtractor.cs" />
+    <Compile Include="Enviroment\CostExtractors\TravelCostExtractor.cs" />
+    <Compile Include="Enviroment\Enviroment.cs" />
+    <Compile Include="Enviroment\Map.cs" />
+    <Compile Include="Heuristics\BonusCollectionHeuristic.cs" />
+    <Compile Include="Heuristics\EnemyCountDependendHealingHeuristic.cs" />
+    <Compile Include="Heuristics\HealingHeuristic.cs" />
+    <Compile Include="Heuristics\IHeuristic.cs" />
+    <Compile Include="Heuristics\ItemCollectorHeuristic.cs" />
+    <Compile Include="Heuristics\LevelLeavingHeuristic.cs" />
+    <Compile Include="Heuristics\NearAttackHeuristic.cs" />
+    <Compile Include="Heuristics\FarAttackHeuristic.cs" />
+    <Compile Include="Heuristics\SuicideAttack.cs" />
+    <Compile Include="Heuristics\TrapEscapeHeuristic.cs" />
     <Compile Include="LocationExtension.cs" />
-    <Compile Include="Map.cs" />
-    <Compile Include="MapEdge.cs" />
-    <Compile Include="MapNode.cs" />
+    <Compile Include="PawnExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

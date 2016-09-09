@@ -12,7 +12,20 @@ namespace DLibrary.Graph
             var enumerator = enumerable?.GetEnumerator();
             var exist = enumerator?.MoveNext() ?? false;
             return exist ? enumerator.Current : def;
+        }
 
+        public static IEnumerable<T[]> NGramm<T>(this IEnumerable<T> en, int n)
+        {
+            var queue = new Queue<T>(n);
+            foreach (var item in en)
+            {
+                queue.Enqueue(item);
+                if (queue.Count == n)
+                {
+                    yield return queue.ToArray();
+                    queue.Dequeue();
+                }
+            }
         }
     }
 }

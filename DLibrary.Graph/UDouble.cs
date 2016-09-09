@@ -31,6 +31,19 @@ namespace DLibrary.Graph
 
         public static readonly UDouble Zero = new UDouble(0);
         public static readonly UDouble One = new UDouble(1);
+
+        public static readonly UDouble MaxValue = new UDouble(double.MaxValue);
+        public static readonly UDouble MinValue = new UDouble(0);
+
+        public static UDouble Parse(string s) => new UDouble(double.Parse(s));
+        public static bool TryParse(string s, out UDouble result)
+        {
+            var d = 0.0;
+            var r = double.TryParse(s, out d);
+            result = new UDouble(d);
+            return r;
+        }
+
         public int CompareTo(UDouble other) => value.CompareTo(other.value);
 
         public bool Equals(UDouble other) => value.Equals(other);

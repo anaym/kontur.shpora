@@ -18,6 +18,7 @@ namespace SpurRoguelike.Core.Entities
             playerController.MakeTurn(Level.CreateView(), EventReporter).Apply(this);
         }
 
+        //TODO:рассчет урона
         public override void PerformAttack(Pawn victim)
         {
             base.PerformAttack(victim);
