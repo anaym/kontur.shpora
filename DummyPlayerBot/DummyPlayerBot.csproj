@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DummyPlayerBot.cs" />
+    <Compile Include="Enviroment\CostExtractors\CellTypeDependendCostExtractor.cs" />
     <Compile Include="Enviroment\CostExtractors\DangerEnemyCostExtractor.cs" />
     <Compile Include="Enviroment\CostExtractors\DistanceFromEnemiesCostExtractor.cs" />
     <Compile Include="Enviroment\CostExtractors\EnviromentDependentCostExtractor.cs" />
@@ -48,6 +49,8 @@
     <Compile Include="Enviroment\CostExtractors\TravelCostExtractor.cs" />
     <Compile Include="Enviroment\Enviroment.cs" />
     <Compile Include="Enviroment\Map.cs" />
+    <Compile Include="Extension\FieldViewExtension.cs" />
+    <Compile Include="Extension\QuickEnumerable.cs" />
     <Compile Include="Heuristics\BonusCollectionHeuristic.cs" />
     <Compile Include="Heuristics\EnemyCountDependendHealingHeuristic.cs" />
     <Compile Include="Heuristics\HealingHeuristic.cs" />
@@ -58,8 +61,8 @@
     <Compile Include="Heuristics\FarAttackHeuristic.cs" />
     <Compile Include="Heuristics\SuicideAttack.cs" />
     <Compile Include="Heuristics\TrapEscapeHeuristic.cs" />
-    <Compile Include="LocationExtension.cs" />
-    <Compile Include="PawnExtension.cs" />
+    <Compile Include="Extension\LocationExtension.cs" />
+    <Compile Include="Extension\PawnExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

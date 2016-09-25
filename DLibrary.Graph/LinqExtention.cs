@@ -27,5 +27,17 @@ namespace DLibrary.Graph
                 }
             }
         }
+
+        public static int MinOr<T>(this IEnumerable<T> en, Func<T, int> selector, int def)
+        {
+            var min = int.MaxValue;
+            var notEmpty = false;
+            foreach (var item in en)
+            {
+                notEmpty = true;
+                min = Math.Min(selector(item), min);
+            }
+            return notEmpty ? min : def;
+        }
     }
 }

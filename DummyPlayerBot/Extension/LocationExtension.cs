@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DLibrary.Graph;
+using DummyPlayerBot.Extension;
 using SpurRoguelike.Core.Primitives;
 
 namespace DummyPlayer
@@ -18,6 +19,26 @@ namespace DummyPlayer
         public static bool InRect(this Location a, Location leftTop, Location rightBottom) => a.X.InRange(leftTop.X, rightBottom.X) && a.Y.InRange(leftTop.Y, rightBottom.Y);
 
         public static IEnumerable<Turn> ToTurn(this IEnumerable<Location> locations) => locations.NGramm(2).Select(p => Turn.Step(p[1] - p[0]));
+
+        public static IEnumerable<IEnumerable<Location>> RowRectangleAcross(this Location leftTop, Location rightBottom)
+        {
+            for (int x = leftTop.X; x <= rightBottom.X; x++)
+            {
+                yield return Enumerable.Range(leftTop.Y, rightBottom.Y - leftTop.Y + 1).Select(y => new Location(x, y));
+            }
+        }
+
+        public static IEnumerable<IEnumerable<Location>> RowRectangleAcross(this Location centre, int widthRadius, int heightRadius)
+        {
+            return
+                new Location(centre.X - widthRadius, centre.Y - heightRadius)
+                    .RowRectangleAcross(new Location(centre.X + widthRadius, centre.Y + heightRadius));
+        }
+
+        public static IEnumerable<IEnumerable<Location>> RowRectangleAcross(this Location centre, int radius)
+        {
+            return centre.RowRectangleAcross(radius, radius);
+        }
     }
 
     public static class DoubleExtension

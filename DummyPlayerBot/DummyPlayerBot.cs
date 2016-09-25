@@ -26,7 +26,7 @@ namespace DummyPlayer
         {
             Sense = new List<IHeuristic>();
             Sense.Add(new EnemyCountDependendHealingHeuristic(25, 60));
-            Sense.Add(new TrapEscapeHeuristic(50, 4, 30));
+            Sense.Add(new TrapEscapeHeuristic(50, 4, 40));
             Sense.Add(new HealingHeuristic(25));
             Sense.Add(new NearAttackHeuristic());
             Sense.Add(new HealingHeuristic(100));

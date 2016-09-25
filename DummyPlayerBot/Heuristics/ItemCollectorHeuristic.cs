@@ -34,7 +34,7 @@ namespace DummyPlayer
             if (nearest.X == int.MinValue)
                 return null;
             Status = $"[{nearest.GetType()}]";
-            var path = level.Map.FindPath(self, nearest, PathFinder, new DistanceFromEnemiesCostExtractor(level));
+            var path = level.Map.FindPath(self, nearest, PathFinder, new CellTypeDependendCostExtractor(level));
             return path.ToTurn().FirstOr(null);
         }
 

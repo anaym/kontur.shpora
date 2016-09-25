@@ -15,7 +15,7 @@ namespace DummyPlayer
         public int ActualHpLevel(Enviroment enviroment)
         {
             var self = enviroment.View.Player;
-            var nearEnemy = enviroment.View.Monsters.Count(e => LocationExtension.Distance(e.Location, self.Location) < 10);
+            var nearEnemy = enviroment.View.Monsters.Count(e => e.Location.Distance(self.Location) < 10);
             var totalEnemy = enviroment.View.Monsters.Count();
             if (nearEnemy == 1)
                 return NormalHpLevel;

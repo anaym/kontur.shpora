@@ -58,7 +58,7 @@ namespace DummyPlayer
             if (Target != null)
                 return
                     level.Map.FindPath(level.View.Player.Location, (Location)Target, new PositiveWeighesPathFinder(),
-                        new DistanceFromEnemiesCostExtractor(level)).ToTurn().FirstOr(null);
+                        new CellTypeDependendCostExtractor(level, 5)).ToTurn().FirstOr(null);
             return null;
         }
 
