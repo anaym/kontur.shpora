@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using DLibrary.Graph;
-using DummyPlayerBot.Enviroment;
-using DummyPlayerBot.Enviroment.CostExtractors;
+using DummyPlayerBot.FastKillBot;
+using DummyPlayerBot.FastKillBot.CostExtractors;
 using SpurRoguelike.Core.Primitives;
 using SpurRoguelike.Core.Views;
 

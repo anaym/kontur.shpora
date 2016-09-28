@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DummyPlayerBot.Enviroment;
+using DummyPlayerBot.FastKillBot;
 using SpurRoguelike.Core.Primitives;
 
 namespace DummyPlayer

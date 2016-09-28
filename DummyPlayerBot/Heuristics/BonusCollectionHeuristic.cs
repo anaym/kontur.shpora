@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DummyPlayerBot.Enviroment;
 using SpurRoguelike.Core.Primitives;
 using SpurRoguelike.Core.Views;
-
+/*
 namespace DummyPlayer
 {
     public class BonusCollectionHeuristic : ItemCollectorHeuristic
@@ -46,4 +45,4 @@ namespace DummyPlayer
                 .Where(i => NowBonusSize(enviroment) < BonusSize(i))
                 .Select(i => i.Location);
     }
-}
+}*/

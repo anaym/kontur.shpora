@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DLibrary.Graph;
-using DummyPlayerBot.Enviroment;
+using DummyPlayerBot;
 using SpurRoguelike.Core;
 using SpurRoguelike.Core.Primitives;
 using SpurRoguelike.Core.Views;
@@ -20,44 +20,34 @@ namespace DummyPlayer
 {
     public class DummyPlayerBot : IPlayerController
     {
-        public List<IHeuristic> Sense;
-        public Enviroment Enviroment;
+        public IBot Bot;
+        public int Level;
+        public Dictionary<int, IBotFactory> BotFactories;
+
         public DummyPlayerBot()
         {
-            Sense = new List<IHeuristic>();
-            Sense.Add(new EnemyCountDependendHealingHeuristic(25, 60));
-            Sense.Add(new TrapEscapeHeuristic(50, 4, 40));
-            Sense.Add(new HealingHeuristic(25));
-            Sense.Add(new NearAttackHeuristic());
-            Sense.Add(new HealingHeuristic(100));
-            //Sense.Add(new FarAttackHeuristic(10));
-            Sense.Add(new FarAttackHeuristic(1000));
-            Sense.Add(new BonusCollectionHeuristic(int.MaxValue, false));
-            Sense.Add(new HealingHeuristic(100));
-            Sense.Add(new SuicideAttack());
-            Sense.Add(new LevelLeavingHeuristic());
+            Bot = null;
+            Level = -1;
+            
+            BotFactories = new Dictionary<int, IBotFactory>();
+            BotFactories.Add(0, new LambdaBotFactory((v, i) => new FastKillBot(v)));
         }
 
         public Turn MakeTurn(LevelView levelView, IMessageReporter messageReporter)
         {
-            if (Enviroment == null)
-                Enviroment = new Enviroment(levelView);
-            Enviroment.Update(levelView);
-
-            //Thread.Sleep(50);
-            foreach (var heuristic in Sense)
+            if (Bot == null || !levelView.Field.GetCellsOfType(CellType.Exit).First().Equals(Bot.Exit))
             {
-                var result = heuristic.Solve(Enviroment);
-                if (result != null)
+                Level++;
+                if (BotFactories.ContainsKey(Level))
                 {
-                    messageReporter.ReportMessage($"[DPB]: {heuristic.Name} {heuristic.Status}");
-                    //File.AppendAllLines("log.txt", new []{ $"[DPB]: {heuristic}" }, Encoding.UTF8);
-                    return result;
+                    Bot = BotFactories[Level].CreateBot(levelView, Level);
+                }
+                else
+                {
+                    Bot = BotFactories[BotFactories.Keys.Min()].CreateBot(levelView, Level);
                 }
             }
-            messageReporter.ReportMessage($"[DPB]: Critical error");
-            //File.AppendAllLines("log.txt", new[] { $"[DPB]: Critical error" }, Encoding.UTF8);
-            return Turn.None;
+            return Bot.Iteration(levelView, messageReporter);
         }
 
         private static bool IsInAttackRange(Location a, Location b)

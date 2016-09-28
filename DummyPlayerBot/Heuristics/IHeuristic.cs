@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using DummyPlayerBot.Enviroment;
+using DummyPlayerBot.FastKillBot;
 using SpurRoguelike.Core.Entities;
 using SpurRoguelike.Core.Primitives;
 using SpurRoguelike.Core.Views;

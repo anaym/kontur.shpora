@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using DummyPlayerBot.Enviroment;
+using DummyPlayerBot.FastKillBot;
 
 namespace DummyPlayer
 {

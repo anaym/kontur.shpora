@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using DLibrary.Graph;
-using DummyPlayerBot.Enviroment;
-using DummyPlayerBot.Enviroment.CostExtractors;
+using DummyPlayerBot.FastKillBot;
+using DummyPlayerBot.FastKillBot.CostExtractors;
 using SpurRoguelike.Core.Primitives;
 
 namespace DummyPlayer
