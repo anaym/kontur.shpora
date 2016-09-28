@@ -51,12 +51,12 @@ namespace DummyPlayer
                 if (result != null)
                 {
                     messageReporter.ReportMessage($"[DPB]: {heuristic.Name} {heuristic.Status}");
-                    File.AppendAllLines("log.txt", new []{ $"[DPB]: {heuristic}" }, Encoding.UTF8);
+                    //File.AppendAllLines("log.txt", new []{ $"[DPB]: {heuristic}" }, Encoding.UTF8);
                     return result;
                 }
             }
             messageReporter.ReportMessage($"[DPB]: Critical error");
-            File.AppendAllLines("log.txt", new[] { $"[DPB]: Critical error" }, Encoding.UTF8);
+            //File.AppendAllLines("log.txt", new[] { $"[DPB]: Critical error" }, Encoding.UTF8);
             return Turn.None;
         }
 

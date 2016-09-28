@@ -38,8 +38,8 @@ namespace DummyPlayerBot.Enviroment
                 File.AppendAllLines("log.txt", new[] {$"[PDB]: ================================="}, Encoding.UTF8);
                 Level += 1;
             }
-            if (Level == 4)
-                Thread.Sleep(100);
+            //if (Level == 4)
+            //    Thread.Sleep(100);
             Map.Update(this);
         }
     }
