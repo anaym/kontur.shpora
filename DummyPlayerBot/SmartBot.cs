@@ -28,8 +28,10 @@ namespace DummyPlayerBot
         public Turn Iteration(LevelView level, IMessageReporter reporter)
         {
             Enviroment.Update(level, 3);
-            var attackMap = Map.Sum(Enviroment.WallMap, Enviroment.TrapMap);
+            var bonusIgnore = new BadObjectMap(level, (view, location) => level.Items.Any(i => i.Location.Equals(location)), view => level.Items.Select(i => i.Location), 1);
+            var attackMap = Map.Sum(Enviroment.WallMap, Enviroment.TrapMap, bonusIgnore);
             var travelMap = Map.Sum(attackMap, Enviroment.EnemyMap);
+            var bonusCollectorMap = Map.Sum(Enviroment.WallMap, Enviroment.EnemyMap, Enviroment.TrapMap);
             if (level.Player.Health < 50 && level.HealthPacks.Any())
             {
                 var path = travelMap.FindPath(level.Player.Location, level.HealthPacks.OrderBy(h => h.Location.Distance(level.Player.Location)).First().Location);
@@ -37,7 +39,7 @@ namespace DummyPlayerBot
             }
             if (level.Items.Any(i => i.IsBetter(level.Player)))
             {
-                var path = travelMap.FindPath(level.Player.Location, level.Items.First(i => i.IsBetter(level.Player)).Location);
+                var path = bonusCollectorMap.FindPath(level.Player.Location, level.Items.First(i => i.IsBetter(level.Player)).Location);
                 return Turn.Step(path[1] - path[0]);
             }
             //если рядом много ботов и резко выросла стоимость дойти до аптечки - trap - убегаем

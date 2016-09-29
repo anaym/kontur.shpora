@@ -42,13 +42,13 @@ namespace DummyPlayerBot
                 var monster = level.Monsters.Where(m => m.Location.IsInRange(level.Player.Location, 1)).OrderBy(m => m.Health).First();
                 return Turn.Attack(monster.Location - level.Player.Location);
             }
-            //if (level.Monsters.Any())
-            //{
-            //    var path = attackMap.FindPath(level.Player.Location, level.Monsters.OrderBy(h => h.Location.Distance(level.Player.Location)).First().Location);
-            //    if (path == null)
-            //        return Turn.None;
-            //    return Turn.Step(path[1] - path[0]);
-            //}
+            if (level.Monsters.Any() /*&& level.Monsters.First().Location.Distance(level.Player.Location) > 1*/)
+            {
+                var path = attackMap.FindPath(level.Player.Location, level.Monsters.OrderBy(h => h.Location.Distance(level.Player.Location)).First().Location);
+                if (path == null)
+                    return Turn.None;
+                return Turn.Step(path[1] - path[0]);
+            }
             if (!ExitIsClosed(level))
             {
                 Enviroment = Enviroment.FromLevelView(level, 2);
