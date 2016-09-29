@@ -7,7 +7,6 @@ using SpurRoguelike.ConsoleGUI.TextScreen;
 using SpurRoguelike.Content;
 using SpurRoguelike.Core;
 using SpurRoguelike.Generators;
-using DummyPlayer;
 
 namespace SpurRoguelike
 {
@@ -34,13 +33,11 @@ namespace SpurRoguelike
                 .SetDefault(0)
                 .WithDescription("Seed for level generation");
 
-            //atolstov.com
             commandLineParser
-                .Setup(options => options.Debug)
-                .As('d')
-                .SetDefault(false)
-                .WithDescription("Debug mode");
-            //end
+                .Setup(options => options.TestCount)
+                .As('m')
+                .SetDefault(-1)
+                .WithDescription("Many tests");
 
             commandLineParser
                 .Setup(options => options.LevelCount)
@@ -61,24 +58,44 @@ namespace SpurRoguelike
 
         private static void RunGame(GameOptions options)
         {
+            if (options.TestCount != -1)
+            {
+                RunManyGames(options);    
+                return;
+            }
+
             var levels = GenerateLevels(options.Seed, options.LevelCount);
 
             var gui = new ConsoleGui(new TextScreen());
 
-            //atolstov.com
-            //var playerController = options.PlayerController == null ?
-            //    new ConsolePlayerController(gui) :
-            //    BotLoader.LoadPlayerController(options.PlayerController);
-            var playerController = options.Debug ? 
-                new DummyPlayer.DummyPlayerBot() : 
-                (
-                    options.PlayerController == null ?
-                    new ConsolePlayerController(gui) :
-                    BotLoader.LoadPlayerController(options.PlayerController)
-                );
-            //end
+            var playerController = options.PlayerController == null ?
+                new ConsolePlayerController(gui) :
+                BotLoader.LoadPlayerController(options.PlayerController);
 
             var engine = new Engine(options.PlayerName, playerController, levels.First(), new ConsoleRenderer(gui), new ConsoleEventReporter(gui));
+
+            engine.GameLoop();
+        }
+
+        private static void RunManyGames(GameOptions options)
+        {
+            NullIO io = new NullIO(options.Seed);
+            for (int i = 0; i < options.TestCount; i++)
+            {
+                RunOneGame(options.Seed + i, options.LevelCount, options.PlayerController, io);
+            }
+            Console.WriteLine($"Games: {io.GameComleted}/{options.TestCount} = {100*io.GameComleted/options.TestCount}");
+            Console.WriteLine($"Level completed: {io.LevelsCompleted}/{options.TestCount*options.LevelCount} = {100*io.LevelsCompleted/(options.TestCount * options.LevelCount)}");
+            Console.ReadKey();
+        }
+
+        private static void RunOneGame(int seed, int count, string pc, NullIO io)
+        {
+            var levels = GenerateLevels(seed, count);
+
+            var playerController = BotLoader.LoadPlayerController(pc);
+
+            var engine = new Engine("~", playerController, levels.First(), io, io);
 
             engine.GameLoop();
         }
@@ -109,7 +126,7 @@ namespace SpurRoguelike
 
             var settings = FillDefaultSettings();
             
-            for (int i = 0; i < count - 1 /* &&false*/; i++)
+            for (int i = 0; i < count - 1; i++)
             {
                 levels.Add(levelGenerator.Generate(settings, monsterClasses, itemClasses));
 
@@ -207,6 +224,8 @@ namespace SpurRoguelike
 
         private class GameOptions
         {
+            public int TestCount { get; set; }
+
             public string PlayerName { get; set; }
 
             public string PlayerController { get; set; }
@@ -214,8 +233,6 @@ namespace SpurRoguelike
             public int Seed { get; set; }
 
             public int LevelCount { get; set; }
-
-            public bool Debug { get; set; }
         }
     }
 }

@@ -97,6 +97,7 @@
     <Compile Include="Generators\LevelGenerationSettings.cs" />
     <Compile Include="Generators\LevelGenerator.cs" />
     <Compile Include="EntryPoint.cs" />
+    <Compile Include="NullIO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
