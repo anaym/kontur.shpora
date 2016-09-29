@@ -101,12 +101,16 @@ namespace DummyPlayer
         public static Map Sum(IEnumerable<Map> maps)
         {
             var input = maps.ToList();
-            var res = new Map(input[0].Width, input[1].Height);
+            var res = new Map(input[0].Width, input[0].Height);
             for (int x = 0; x < res.Width; x++)
             {
                 for (int y = 0; y < res.Height; y++)
                 {
-                    res.SetWeight(x, y, input.Sum(m => m.GetWeight(x, y)));
+                    res.SetWeight(x, y, input.Sum(m =>
+                    {
+                        return m.GetWeight(x, y);
+
+                    }));
                     res.SetTravaible(x, y, input.All(m => m.IsTravaible(x, y)));
                 }
             }

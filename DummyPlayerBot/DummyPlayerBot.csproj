@@ -40,20 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArenaDestroyerBot.cs" />
     <Compile Include="BonusExtensions.cs" />
-    <Compile Include="Tasks\NearAttack\AttackTask.cs" />
     <Compile Include="DummyPlayerBot.cs" />
     <Compile Include="Enviroment.cs" />
-    <Compile Include="Tasks\FarAttack\FarAttack.cs" />
-    <Compile Include="Tasks\FarAttack\FarAttackGenerator.cs" />
     <Compile Include="FastKillBot.cs" />
     <Compile Include="Extension\FieldViewExtension.cs" />
     <Compile Include="Extension\QuickEnumerable.cs" />
     <Compile Include="Extension\LocationExtension.cs" />
     <Compile Include="Extension\PawnExtension.cs" />
-    <Compile Include="Tasks\TrapEscaper\TrapEscaperGenerator.cs" />
-    <Compile Include="Tasks\TrapEscaper\TrapEscapeTask.cs" />
-    <Compile Include="Tasks\TravelTask\HealingTaskGenerator.cs" />
     <Compile Include="IBot.cs" />
     <Compile Include="IBotFactory.cs" />
     <Compile Include="ITask.cs" />
@@ -64,12 +59,9 @@
     <Compile Include="Maps\Map.cs" />
     <Compile Include="Maps\TrapMap.cs" />
     <Compile Include="Maps\WallMap.cs" />
-    <Compile Include="Tasks\NearAttack\NearAttackGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Maps\BadObjectMap.cs" />
     <Compile Include="SmartBot.cs" />
-    <Compile Include="Tasks\TravelTask\TravelTask.cs" />
-    <Compile Include="Tasks\TravelTask\TravelTaskGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DLibrary.Graph\DLibrary.Graph.csproj">

@@ -5,7 +5,6 @@ using DummyPlayer;
 using DummyPlayerBot.Maps;
 using SpurRoguelike.Core.Primitives;
 using SpurRoguelike.Core.Views;
-using DummyPlayerBot.Tasks.TrapEscaper;
 
 namespace DummyPlayerBot
 {
@@ -17,8 +16,6 @@ namespace DummyPlayerBot
 
         public Enviroment Enviroment;
         public ITask ActualTask;
-        public List<ITaskGenerator> EmergencyGenerators;
-        public List<ITaskGenerator> Generators;
 
         public SmartBot(LevelView level, int levelIndex)
         {
@@ -26,17 +23,6 @@ namespace DummyPlayerBot
             Input = level.Field.GetCellsOfType(CellType.PlayerStart).First();
             Enviroment = Enviroment.FromLevelView(level, 2);
             Index = levelIndex;
-
-            EmergencyGenerators = new List<ITaskGenerator>();
-            EmergencyGenerators.Add(new HealingTaskGenerator(50, 100)); //если мало хп - бежим регениться
-            //EmergencyGenerators.Add(new TrapEscaperGenerator(hpk: 10)); //
-            EmergencyGenerators.Add(new TravelTaskGenerator(l => l.Items.First(i => i.IsBetter(l.Player)).Location, "BONUS", l => l.Items.Any(i => i.IsBetter(l.Player)))); //выбираем дальнюю цель (мега бонус)
-            EmergencyGenerators.Add(new NearAttackGenerator());
-
-            Generators = new List<ITaskGenerator>();
-            Generators.Add(new FarAttackGenerator()); //выбираем дальнюю цель (врага)
-            Generators.Add(new HealingTaskGenerator(99, 99)); //если есть повреждения - хилимся
-            Generators.Add(new TravelTaskGenerator(l => Exit, "EXIT")); //сваливаем
         }
 
         public Turn Iteration(LevelView level, IMessageReporter reporter)
@@ -44,7 +30,7 @@ namespace DummyPlayerBot
             Enviroment.Update(level, 3);
             var attackMap = Map.Sum(Enviroment.WallMap, Enviroment.TrapMap);
             var travelMap = Map.Sum(attackMap, Enviroment.EnemyMap);
-            if (level.Player.Health < 50)
+            if (level.Player.Health < 50 && level.HealthPacks.Any())
             {
                 var path = travelMap.FindPath(level.Player.Location, level.HealthPacks.OrderBy(h => h.Location.Distance(level.Player.Location)).First().Location);
                 return Turn.Step(path[1] - path[0]);
@@ -70,6 +56,8 @@ namespace DummyPlayerBot
             if (level.Monsters.Any())
             {
                 var path = attackMap.FindPath(level.Player.Location, level.Monsters.OrderBy(h => h.Location.Distance(level.Player.Location)).First().Location);
+                if (path == null)
+                    return Turn.None;
                 return Turn.Step(path[1] - path[0]);
             }
             if (level.Player.Health < 100 && level.HealthPacks.Any())
