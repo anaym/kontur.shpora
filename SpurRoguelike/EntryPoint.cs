@@ -109,7 +109,7 @@ namespace SpurRoguelike
 
             var settings = FillDefaultSettings();
             
-            for (int i = 0; i < count - 1/* &&false*/; i++)
+            for (int i = 0; i < count - 1 /* &&false*/; i++)
             {
                 levels.Add(levelGenerator.Generate(settings, monsterClasses, itemClasses));
 

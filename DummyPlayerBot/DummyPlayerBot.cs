@@ -45,11 +45,11 @@ namespace DummyPlayer
                 }
                 else
                 {
-                    Bot = BotFactories[BotFactories.Keys.Min(k => Math.Abs(k - Level))].CreateBot(levelView, Level);
+                    Bot = BotFactories[BotFactories.Keys.OrderBy(k => Math.Abs(k - Level)).First()].CreateBot(levelView, Level);
                 }
             }
-            if (Level == 2)
-                Thread.Sleep(200);
+            //if (Level == 2)
+                //Thread.Sleep(200);
             return Bot.Iteration(levelView, messageReporter);
         }
 

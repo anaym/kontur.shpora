@@ -31,6 +31,6 @@ namespace SpurRoguelike.Core
         private readonly IPlayerController playerController;
         private readonly Level entryLevel;
         private readonly IRenderer renderer;
-        private readonly IEventReporter eventReporter;
+        private IEventReporter eventReporter { get; }
     }
 }

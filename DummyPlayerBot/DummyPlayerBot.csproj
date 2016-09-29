@@ -51,6 +51,8 @@
     <Compile Include="Extension\QuickEnumerable.cs" />
     <Compile Include="Extension\LocationExtension.cs" />
     <Compile Include="Extension\PawnExtension.cs" />
+    <Compile Include="Tasks\TrapEscaper\TrapEscaperGenerator.cs" />
+    <Compile Include="Tasks\TrapEscaper\TrapEscapeTask.cs" />
     <Compile Include="Tasks\TravelTask\HealingTaskGenerator.cs" />
     <Compile Include="IBot.cs" />
     <Compile Include="IBotFactory.cs" />

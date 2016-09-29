@@ -4,13 +4,17 @@ using SpurRoguelike.ConsoleGUI.Panels;
 using SpurRoguelike.Core;
 using SpurRoguelike.Core.Entities;
 using SpurRoguelike.Core.Primitives;
+using System.IO;
 
 namespace SpurRoguelike.ConsoleGUI
 {
     internal class ConsoleGui : IClickHandler
     {
+        public TextWriter Log;
+
         public ConsoleGui(ITextScreen screen)
         {
+            Log = File.AppendText("log.txt");
             this.screen = screen;
 
             mouseDriver = new ConsoleMouseDriver(this);
@@ -142,6 +146,7 @@ namespace SpurRoguelike.ConsoleGUI
 
         public void DisplayMessage(ConsoleMessage message)
         {
+            Log.WriteLine(message.Text);
             messagesPanel.AddMessage(message);
         }
 

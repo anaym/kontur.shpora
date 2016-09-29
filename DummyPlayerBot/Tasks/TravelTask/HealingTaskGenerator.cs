@@ -7,15 +7,21 @@ namespace DummyPlayerBot
     public class HealingTaskGenerator : ITaskGenerator
     {
         public int CriticalHpLevel;
-        public HealingTaskGenerator(int criticalHpLevel)
+        public int MaxCriticalHpLevel;
+        public HealingTaskGenerator(int criticalHpLevel, int maxCriticalHpLevel)
         {
             CriticalHpLevel = criticalHpLevel;
+            MaxCriticalHpLevel = maxCriticalHpLevel;
         }
 
 
         public bool CanReplace(ITask task, LevelView level, Enviroment enviroment)
         {
-            if (level.Player.Health < CriticalHpLevel)
+            var near = level.Monsters.Count(m => m.Location.Distance(level.Player.Location) < 20);
+            var all = level.Monsters.Count();
+            all = all == 0 ? 1 : all;
+            var nowCritical = CriticalHpLevel + (MaxCriticalHpLevel - CriticalHpLevel) * (1.0*near/all);
+            if (level.Player.Health < nowCritical)
             {
                 if (task is TravelTask && level.HealthPacks.Any(p => p.Location.Equals((task as TravelTask).Target)))
                 {
