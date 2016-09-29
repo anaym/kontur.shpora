@@ -31,6 +31,7 @@ namespace DummyPlayer
             
             BotFactories = new Dictionary<int, IBotFactory>();
             BotFactories.Add(0, new LambdaBotFactory((v, i) => new FastKillBot(v)));
+            BotFactories.Add(1, new LambdaBotFactory((v, i) => new SmartBot(v, i)));
         }
 
         public Turn MakeTurn(LevelView levelView, IMessageReporter messageReporter)
@@ -44,9 +45,11 @@ namespace DummyPlayer
                 }
                 else
                 {
-                    Bot = BotFactories[BotFactories.Keys.Min()].CreateBot(levelView, Level);
+                    Bot = BotFactories[BotFactories.Keys.Min(k => Math.Abs(k - Level))].CreateBot(levelView, Level);
                 }
             }
+            if (Level == 2)
+                Thread.Sleep(200);
             return Bot.Iteration(levelView, messageReporter);
         }
 
