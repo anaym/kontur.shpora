@@ -64,10 +64,6 @@
     <Compile Include="SmartBot.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DLibrary.Graph\DLibrary.Graph.csproj">
-      <Project>{cd08c8ea-c4e7-4645-8d22-1aa3a945d056}</Project>
-      <Name>DLibrary.Graph</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SpurRoguelike.Core\SpurRoguelike.Core.csproj">
       <Project>{a9981d1c-3429-4729-b7f7-7839cc30be00}</Project>
       <Name>SpurRoguelike.Core</Name>

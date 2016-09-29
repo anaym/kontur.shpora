@@ -16,12 +16,20 @@ namespace DummyPlayerBot
 
         public static long MaxOr<T>(this IEnumerable<T> seq, Func<T, long> numExtractor, long def = 0)
         {
-            long buffer = def;
+            long max = long.MinValue;
+            bool ex = false;
             foreach (var item in seq)
             {
-                buffer += numExtractor(item);
+                var n = numExtractor(item);
+                if (n > max)
+                {
+                    ex = true;
+                    max = n;
+                }
             }
-            return buffer;
+            if (!ex)
+                return def;
+            return max;
         }
 
         public static IEnumerable<T[]> NGramm<T>(this IEnumerable<T> en, int n)

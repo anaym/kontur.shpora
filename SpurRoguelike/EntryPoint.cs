@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Fclp;
 using SpurRoguelike.ConsoleGUI;
@@ -82,11 +83,14 @@ namespace SpurRoguelike
             NullIO io = new NullIO(options.Seed);
             for (int i = 0; i < options.TestCount; i++)
             {
-                RunOneGame(options.Seed + i, options.LevelCount, options.PlayerController, io);
+                var s = new Random().Next();
+                Console.WriteLine("S" + s);
+                RunOneGame(s, options.LevelCount, options.PlayerController, io);
             }
             Console.WriteLine($"Games: {io.GameComleted}/{options.TestCount} = {100*io.GameComleted/options.TestCount}");
             Console.WriteLine($"Level completed: {io.LevelsCompleted}/{options.TestCount*options.LevelCount} = {100*io.LevelsCompleted/(options.TestCount * options.LevelCount)}");
-            Console.ReadKey();
+            File.AppendText("res.txt").WriteLine($"Games: {io.GameComleted}/{options.TestCount} = {100 * io.GameComleted / options.TestCount}\n"+ $"Level completed: {io.LevelsCompleted}/{options.TestCount * options.LevelCount} = {100 * io.LevelsCompleted / (options.TestCount * options.LevelCount)}");
+            //Console.ReadKey();
         }
 
         private static void RunOneGame(int seed, int count, string pc, NullIO io)

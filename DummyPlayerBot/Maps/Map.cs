@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DLibrary.Graph;
 using SpurRoguelike.Core.Primitives;
 using LinqExtention = DummyPlayerBot.LinqExtention;
 
@@ -54,18 +53,33 @@ namespace DummyPlayer
         public List<Location> FindPath(Location start, Location end)
         {
             var data = new Dictionary<Location, DijkstraData> { { start, new DijkstraData(null, 0) } };
+            var notOpenned = new List<Location> { start };
             while (true)
             {
-                var finded = LinqExtention.FirstOr(data.Where(n => !n.Value.Oppened).OrderBy(n => n.Value.Cost), new KeyValuePair<Location, DijkstraData>(start, null));
-                if (finded.Value == null)
+                Location mink = new Location();
+                long minv = long.MaxValue;
+                bool exist = false;
+                foreach (var key in notOpenned)
+                {
+
+                    if (data[key].Cost < minv)
+                    {
+                        minv = data[key].Cost;
+                        mink = key;
+                        exist = true;
+                    }
+                    
+                }
+                if (!exist)
                     break;
-                var now = finded.Key;
+                var now = mink;
                 foreach (var to in GetNearest(now))
                 {
                     var newCost = GetWeight(to) + data[now].Cost;
                     if (!data.ContainsKey(to))
                     {
                         data.Add(to, new DijkstraData(now, newCost));
+                        notOpenned.Add(to);
                     }
                     else
                     {
@@ -77,6 +91,7 @@ namespace DummyPlayer
                         }
                     }
                 }
+                notOpenned.Remove(now);
                 data[now].Oppened = true;
             }
             if (!data.ContainsKey(end)) return null;

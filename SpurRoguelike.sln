@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpurRoguelike.PlayerBot", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DummyPlayerBot", "DummyPlayerBot\DummyPlayerBot.csproj", "{85AE63CB-2603-48AF-905A-20AD6C630C17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DLibrary.Graph", "DLibrary.Graph\DLibrary.Graph.csproj", "{CD08C8EA-C4E7-4645-8D22-1AA3A945D056}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,10 +33,6 @@ Global
 		{85AE63CB-2603-48AF-905A-20AD6C630C17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{85AE63CB-2603-48AF-905A-20AD6C630C17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{85AE63CB-2603-48AF-905A-20AD6C630C17}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CD08C8EA-C4E7-4645-8D22-1AA3A945D056}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD08C8EA-C4E7-4645-8D22-1AA3A945D056}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CD08C8EA-C4E7-4645-8D22-1AA3A945D056}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CD08C8EA-C4E7-4645-8D22-1AA3A945D056}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

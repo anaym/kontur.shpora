@@ -41,11 +41,9 @@ namespace DummyPlayerBot
             else if (level.Monsters.Any())
             {
                 int i = 0;
-                while (path == null)
-                {
-                    i++;
-                    path = travelMap.FindPath(level.Player.Location, level.Monsters.OrderBy(h => h.Location.Distance(level.Player.Location)).First().Location);
-                }
+                path = travelMap.FindPath(level.Player.Location, level.Monsters.OrderBy(h => h.Location.Distance(level.Player.Location)).First().Location);
+                if (i > 10)
+                return Turn.None;           
                 messageReporter.ReportMessage("Far attack");
             }
             else if (level.Player.Health < 100 && level.HealthPacks.Any())
@@ -60,7 +58,8 @@ namespace DummyPlayerBot
             else
             {
                 messageReporter.ReportMessage("Leave");
-                path = pathMap.FindPath(level.Player.Location, Exit);
+                var leaveMap  = Map.Sum(travelMap, new BadObjectMap(level, (view, location) => level.Items.Any(i => i.Location.Equals(location)), view => level.Items.Select(i => i.Location), 1));
+                path = leaveMap.FindPath(level.Player.Location, Exit);
             }
             //Thread.Sleep(50);
             return Turn.Step(path[1] - path[0]);
