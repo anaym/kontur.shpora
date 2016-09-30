@@ -7,22 +7,23 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DummyPlayerBot;
+using DummyPlayerBot.AI;
+using DummyPlayerBot.Extension;
 using SpurRoguelike.Core;
 using SpurRoguelike.Core.Primitives;
 using SpurRoguelike.Core.Views;
-using DummyPlayer;
 
 //TODO: присоедениться к чату в телеграме
 //TODO: понять логику движения врагов
 //TODO: написать небольшую графовую библиотеку и внедрить её
 
-namespace DummyPlayer
+namespace DummyPlayerBot
 {
     public class DummyPlayerBot : IPlayerController
     {
-        public IBot Bot;
-        public int Level;
-        public Dictionary<int, IBotFactory> BotFactories;
+        public IAi Ai;
+        public int LevelIndex;
+        public Dictionary<int, IAiFactory> AiFactories;
         public int MonsterCount;
 
         private Queue<Location> history;
@@ -30,12 +31,12 @@ namespace DummyPlayer
 
         public DummyPlayerBot()
         {
-            Bot = null;
-            Level = -1;
+            Ai = null;
+            LevelIndex = -1;
             
-            BotFactories = new Dictionary<int, IBotFactory>();
-            BotFactories.Add(0, new LambdaBotFactory((v, i) => new FastKillBot(v)));
-            BotFactories.Add(1, new LambdaBotFactory((v, i) => new SmartBot(v, i)));
+            AiFactories = new Dictionary<int, IAiFactory>();
+            AiFactories.Add(0, new LambdaAiFactory((v, i) => new FastKillAi(v)));
+            AiFactories.Add(1, new LambdaAiFactory((v, i) => new SmartAi(v, i)));
 
             history = new Queue<Location>();
             historySize = 20;
@@ -43,35 +44,35 @@ namespace DummyPlayer
 
         public Turn MakeTurn(LevelView levelView, IMessageReporter messageReporter)
         {
-            if (Bot == null || !levelView.Field.GetCellsOfType(CellType.Exit).First().Equals(Bot.Exit) || MonsterCount < levelView.Monsters.Count())
+            if (Ai == null || !levelView.Field.GetCellsOfType(CellType.Exit).First().Equals(Ai.Exit) || MonsterCount < levelView.Monsters.Count())
             {
-                Level++;
+                LevelIndex++;
                 if (IsLastLevel(levelView))
                 {
-                    Bot = new ArenaDestroyerBot(levelView);
+                    Ai = new ArenaDestroyerAi(levelView);
                 }
-                else if (BotFactories.ContainsKey(Level))
+                else if (AiFactories.ContainsKey(LevelIndex))
                 {
-                    Bot = BotFactories[Level].CreateBot(levelView, Level);
+                    Ai = AiFactories[LevelIndex].CreateBot(levelView, LevelIndex);
                 }
                 else
                 {
-                    Bot = BotFactories[BotFactories.Keys.OrderBy(k => Math.Abs(k - Level)).First()].CreateBot(levelView, Level);
+                    Ai = AiFactories[AiFactories.Keys.OrderBy(k => Math.Abs(k - LevelIndex)).First()].CreateBot(levelView, LevelIndex);
                 }
                 history = new Queue<Location>(historySize);
             }
             MonsterCount = levelView.Monsters.Count();
-            //if (Level == 2)
+            //if (LevelIndex == 2)
                 //Thread.Sleep(200);
             var isAttack = false;
-            var action =  Bot.Iteration(levelView, messageReporter, out isAttack);
+            var action =  Ai.Iteration(levelView, messageReporter, out isAttack);
             if (!isAttack)
             {
                 history.Enqueue(levelView.Player.Location);
                 if (history.Count > historySize)
                 {
                     history.Dequeue();
-                    if (new HashSet<Location>(history).Count < (historySize*Bot.CriticalPercentageInactivity/100))
+                    if (new HashSet<Location>(history).Count < (historySize*Ai.CriticalPercentageInactivity/100))
                     {
                         messageReporter.ReportMessage("T");
                         history.Clear();

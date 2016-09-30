@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using DummyPlayer;
+using DummyPlayerBot;
 using SpurRoguelike.Core;
 using SpurRoguelike.Core.Primitives;
 using SpurRoguelike.Core.Views;

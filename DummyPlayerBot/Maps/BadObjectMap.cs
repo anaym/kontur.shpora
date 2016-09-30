@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DummyPlayer;
+using DummyPlayerBot.Extension;
 using SpurRoguelike.Core.Primitives;
 using SpurRoguelike.Core.Views;
 
-namespace DummyPlayerBot
+namespace DummyPlayerBot.Maps
 {
     public class BadObjectMap : Map
     {

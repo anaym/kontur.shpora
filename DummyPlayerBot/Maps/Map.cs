@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DummyPlayerBot.Extension;
 using SpurRoguelike.Core.Primitives;
-using LinqExtention = DummyPlayerBot.LinqExtention;
+using LinqExtention = DummyPlayerBot.Extension.LinqExtention;
 
-namespace DummyPlayer
+namespace DummyPlayerBot.Maps
 {
     public class Map
     {

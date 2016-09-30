@@ -40,28 +40,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArenaDestroyerBot.cs" />
-    <Compile Include="BonusExtensions.cs" />
+    <Compile Include="AI\ArenaDestroyerAi.cs" />
+    <Compile Include="AI\BonusExtensions.cs" />
+    <Compile Include="AI\Heuristics\BonusCollectorHeuristic.cs" />
+    <Compile Include="AI\Heuristics\FarAttackHeuristic.cs" />
+    <Compile Include="AI\Heuristics\HealingHeuristic.cs" />
+    <Compile Include="AI\Heuristics\IHeuristic.cs" />
+    <Compile Include="AI\Heuristics\NearAttackHeurisitc.cs" />
+    <Compile Include="AI\Heuristics\TrapLeaverHeuristic.cs" />
     <Compile Include="DummyPlayerBot.cs" />
     <Compile Include="Enviroment.cs" />
-    <Compile Include="FastKillBot.cs" />
-    <Compile Include="Extension\FieldViewExtension.cs" />
-    <Compile Include="Extension\QuickEnumerable.cs" />
+    <Compile Include="AI\FastKillAi.cs" />
+    <Compile Include="Extension\FieldView.cs" />
     <Compile Include="Extension\LocationExtension.cs" />
     <Compile Include="Extension\PawnExtension.cs" />
-    <Compile Include="IBot.cs" />
-    <Compile Include="IBotFactory.cs" />
-    <Compile Include="ITask.cs" />
-    <Compile Include="ITaskGenerator.cs" />
-    <Compile Include="LambdaBotFactory.cs" />
-    <Compile Include="LinqExtention.cs" />
+    <Compile Include="AI\IAI.cs" />
+    <Compile Include="AI\IAiFactory.cs" />
+    <Compile Include="AI\LambdaAiFactory.cs" />
+    <Compile Include="Extension\LinqExtention.cs" />
     <Compile Include="Maps\EnemyMap.cs" />
     <Compile Include="Maps\Map.cs" />
     <Compile Include="Maps\TrapMap.cs" />
     <Compile Include="Maps\WallMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Maps\BadObjectMap.cs" />
-    <Compile Include="SmartBot.cs" />
+    <Compile Include="AI\SmartAi.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SpurRoguelike.Core\SpurRoguelike.Core.csproj">

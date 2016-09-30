@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DummyPlayerBot;
-using DummyPlayerBot.Extension;
 using SpurRoguelike.Core.Primitives;
 
-namespace DummyPlayer
+namespace DummyPlayerBot.Extension
 {
     public static class LocationExtension
     {

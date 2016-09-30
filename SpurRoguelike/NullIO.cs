@@ -48,7 +48,7 @@ namespace SpurRoguelike
         public void ReportLevelEnd()
         {
             LevelsCompleted++;
-            Console.WriteLine($"Level {NowLevel} done! {DateTime.Now}");
+            Console.WriteLine($"LevelIndex {NowLevel} done! {DateTime.Now}");
             NowLevel++;
         }
 

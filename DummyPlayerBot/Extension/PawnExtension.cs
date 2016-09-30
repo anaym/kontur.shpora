@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SpurRoguelike.Core.Views;
 
-namespace DummyPlayer
+namespace DummyPlayerBot.Extension
 {
     public static class PawnExtension
     {

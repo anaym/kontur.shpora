@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using DummyPlayer;
+using DummyPlayerBot.Extension;
 using DummyPlayerBot.Maps;
 using SpurRoguelike.Core.Primitives;
 using SpurRoguelike.Core.Views;
 
-namespace DummyPlayerBot
+namespace DummyPlayerBot.AI
 {
-    public class FastKillBot : IBot
+    public class FastKillAi : IAi
     {
         public int CriticalPercentageInactivity => 10;
         public Location Exit { get; }
         public WallMap WallMap;
         public ItemView BestItem(LevelView level) => level.Items.OrderByDescending(i => Math.Max(i.AttackBonus, i.DefenceBonus)).ThenByDescending(i => i.AttackBonus + i.DefenceBonus).First();
 
-        public FastKillBot(LevelView level)
+        public FastKillAi(LevelView level)
         {
             Exit = level.Field.GetCellsOfType(CellType.Exit).First();
             WallMap = new WallMap(level, 2);

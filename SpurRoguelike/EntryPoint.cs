@@ -118,9 +118,9 @@ namespace SpurRoguelike
                 RunOneGame(s, options.LevelCount, options.PlayerController, io);
             }
             Console.WriteLine($"Games: {io.GameComleted}/{options.TestCount} = {100*io.GameComleted/options.TestCount}");
-            Console.WriteLine($"Level completed: {io.LevelsCompleted}/{options.TestCount*options.LevelCount} = {100*io.LevelsCompleted/(options.TestCount * options.LevelCount)}");
+            Console.WriteLine($"LevelIndex completed: {io.LevelsCompleted}/{options.TestCount*options.LevelCount} = {100*io.LevelsCompleted/(options.TestCount * options.LevelCount)}");
             Console.WriteLine($"{io.Wasted.TotalSeconds} s, {io.Wasted.TotalSeconds / io.GameComleted / options.LevelCount} s/l, {io.Wasted.TotalSeconds / io.GameComleted} s/g");
-            File.AppendText("res.txt").WriteLine($"Games: {io.GameComleted}/{options.TestCount} = {100 * io.GameComleted / options.TestCount}\n"+ $"Level completed: {io.LevelsCompleted}/{options.TestCount * options.LevelCount} = {100 * io.LevelsCompleted / (options.TestCount * options.LevelCount)}");
+            File.AppendText("res.txt").WriteLine($"Games: {io.GameComleted}/{options.TestCount} = {100 * io.GameComleted / options.TestCount}\n"+ $"LevelIndex completed: {io.LevelsCompleted}/{options.TestCount * options.LevelCount} = {100 * io.LevelsCompleted / (options.TestCount * options.LevelCount)}");
             if (options.WaitKey) Console.ReadKey();
         }
 

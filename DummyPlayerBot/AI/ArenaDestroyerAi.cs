@@ -1,26 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DummyPlayer;
+using DummyPlayerBot.Extension;
 using DummyPlayerBot.Maps;
 using SpurRoguelike.Core.Primitives;
 using SpurRoguelike.Core.Views;
 
-namespace DummyPlayerBot
+namespace DummyPlayerBot.AI
 {
-    public class ArenaDestroyerBot : IBot
+    public class ArenaDestroyerAi : IAi
     {
         public Stopwatch Time { get; }
         public int CriticalTime { get; set; }
         public long RemaingDistance { get; set; }
         public int CriticalPercentageInactivity => 40;
 
-        public ArenaDestroyerBot(LevelView level)
+        public ArenaDestroyerAi(LevelView level)
         {
-            Enviroment = Enviroment.FromLevelView(level, 2);
+            Enviroment = new Enviroment(level, 2);
             Exit = level.Field.GetCellsOfType(CellType.Exit).First();
             CriticalTime = 100;
             Time = new Stopwatch();
@@ -63,7 +59,7 @@ namespace DummyPlayerBot
             }
             if (!ExitIsClosed(level))
             {
-                Enviroment = Enviroment.FromLevelView(level, 2);
+                Enviroment = new Enviroment(level, 2);
                 var path = travelMap.FindPath(level.Player.Location, Exit);
                 isAttack = false;
                 if (path == null)
