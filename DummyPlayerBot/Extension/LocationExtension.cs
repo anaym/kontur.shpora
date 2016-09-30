@@ -16,6 +16,26 @@ namespace DummyPlayer
         public static Location WithDelta(this Location location, int dx, int dy) => new Location(location.X + dx, location.Y + dy);
         public static int Distance(this Location a, Location b) => Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
 
+        public static IEnumerable<Location> Near(this Location pos, int stepCount = 1)
+        {
+            var near = new HashSet<Location> {pos};
+            for (int i = 0; i < stepCount; i++)
+            {
+                var now = new HashSet<Location>();
+                foreach (var location in near)
+                {
+                    foreach (var p in new Location[] {location.Up(), location.Down(), location.Left(), location.Right()})
+                    {
+                        now.Add(p);
+                    }
+                    now.Add(location);
+                }
+                near = now;
+            }
+            near.Remove(pos);
+            return near;
+        }
+
         public static bool InRect(this Location a, Location leftTop, Location rightBottom) => a.X.InRange(leftTop.X, rightBottom.X) && a.Y.InRange(leftTop.Y, rightBottom.Y);
 
         public static IEnumerable<Turn> ToTurn(this IEnumerable<Location> locations) => locations.NGramm(2).Select(p => Turn.Step(p[1] - p[0]));

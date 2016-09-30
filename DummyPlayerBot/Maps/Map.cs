@@ -11,15 +11,18 @@ namespace DummyPlayer
         private readonly long[,] weigthes;
         private readonly bool[,] travable;
 
+        public int Multiplyer { get; set; }
+
         public Map(int width, int height)
         {
             weigthes = new long[width,height];
             travable = new bool[width,height];
+            Multiplyer = 1;
         }
 
         public long GetWeight(int x, int y)
         {
-            return weigthes[x, y];
+            return weigthes[x, y] * Multiplyer;
         }
 
         public long GetWeight(Location pos) => GetWeight(pos.X, pos.Y);

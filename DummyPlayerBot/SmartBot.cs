@@ -27,6 +27,8 @@ namespace DummyPlayerBot
 
         public Turn Iteration(LevelView level, IMessageReporter reporter)
         {
+            if (Index == 100500)
+                Thread.Sleep(100);
             Enviroment.Update(level, 3);
             var bonusIgnore = new BadObjectMap(level, (view, location) => level.Items.Any(i => i.Location.Equals(location)), view => level.Items.Select(i => i.Location), 1);
             var attackMap = Map.Sum(Enviroment.WallMap, Enviroment.TrapMap, bonusIgnore);
@@ -34,24 +36,47 @@ namespace DummyPlayerBot
             var bonusCollectorMap = Map.Sum(Enviroment.WallMap, Enviroment.EnemyMap, Enviroment.TrapMap);
             if (level.Player.Health < 50 && level.HealthPacks.Any())
             {
-                var path = travelMap.FindPath(level.Player.Location, level.HealthPacks.OrderBy(h => h.Location.Distance(level.Player.Location)).First().Location);
+                Enviroment.EnemyMap.Multiplyer = 2;
+                var map = Map.Sum(travelMap, Enviroment.EnemyMap);
+                Enviroment.EnemyMap.Multiplyer = 2;
+                
+                foreach (var hp in level.HealthPacks.OrderBy(h => h.Location.Distance(level.Player.Location)))
+                {
+                    var path = map.FindPath(level.Player.Location, hp.Location);
+                    if (path == null)
+                    {
+                        if (level.Monsters.Any(m => m.Location.IsInRange(level.Player.Location, 1)))
+                        {
+                            return Turn.Attack(level.Monsters.First(m => m.Location.IsInRange(level.Player.Location, 1)).Location - level.Player.Location);
+                        }
+
+                    }
+                    else
+                    {
+                        return Turn.Step(path[1] - path[0]);
+                    }
+                }
+                return Turn.None;
+            }
+            //если рядом много ботов и резко выросла стоимость дойти до аптечки - trap - убегаем
+            if (level.Monsters.Count(m => m.Location.IsInRange(level.Player.Location, 1)) > 1)
+            {
+                Enviroment.EnemyMap.Multiplyer = 2;
+                var map = Map.Sum(travelMap, Enviroment.EnemyMap);
+                Enviroment.EnemyMap.Multiplyer = 2;
+                reporter.ReportMessage("ESCAPE");
+                var spot = new[] { Exit, Input }.OrderByDescending(s => s.Distance(level.Player.Location)).First();
+                var path = map.FindPath(level.Player.Location, spot + new Offset(1, 0));
                 if (path == null)
-                    return Turn.None;
+                    if (level.Monsters.Any(m => m.Location.IsInRange(level.Player.Location, 1)))
+                        return Turn.Attack(level.Monsters.First(m => m.Location.IsInRange(level.Player.Location, 1)).Location - level.Player.Location);
+                    else
+                        return Turn.None;
                 return Turn.Step(path[1] - path[0]);
             }
             if (level.Items.Any(i => i.IsBetter(level.Player)))
             {
                 var path = bonusCollectorMap.FindPath(level.Player.Location, level.Items.First(i => i.IsBetter(level.Player)).Location);
-                if (path == null)
-                    return Turn.None;
-                return Turn.Step(path[1] - path[0]);
-            }
-            //если рядом много ботов и резко выросла стоимость дойти до аптечки - trap - убегаем
-            if (level.Monsters.Count(m => m.Location.IsInRange(level.Player.Location, 1)) > 1)
-            {
-                reporter.ReportMessage("ESCAPE");
-                var spot = new[] { Exit, Input }.OrderByDescending(s => s.Distance(level.Player.Location)).First();
-                var path = travelMap.FindPath(level.Player.Location, spot + new Offset(1, 0));
                 if (path == null)
                     return Turn.None;
                 return Turn.Step(path[1] - path[0]);
@@ -70,10 +95,23 @@ namespace DummyPlayerBot
             }
             if (level.Player.Health < 100 && level.HealthPacks.Any())
             {
-                var path = travelMap.FindPath(level.Player.Location, level.HealthPacks.OrderBy(h => h.Location.Distance(level.Player.Location)).First().Location);
-                if (path == null)
-                    return Turn.None;
-                return Turn.Step(path[1] - path[0]);
+                foreach (var hp in level.HealthPacks.OrderBy(h => h.Location.Distance(level.Player.Location)))
+                {
+                    var path = travelMap.FindPath(level.Player.Location, hp.Location);
+                    if (path == null)
+                    {
+                        if (level.Monsters.Any(m => m.Location.IsInRange(level.Player.Location, 1)))
+                        {
+                            return Turn.Attack(level.Monsters.First(m => m.Location.IsInRange(level.Player.Location, 1)).Location - level.Player.Location);
+                        }
+
+                    }
+                    else
+                    {
+                        return Turn.Step(path[1] - path[0]);
+                    }
+                }
+                return Turn.None;
             }
             {
                 var path = travelMap.FindPath(level.Player.Location, Exit);

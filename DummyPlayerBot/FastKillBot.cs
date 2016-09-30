@@ -23,6 +23,7 @@ namespace DummyPlayerBot
 
         public Turn Iteration(LevelView level, IMessageReporter messageReporter)
         {
+            //Thread.Sleep(100);
             var monsterMap = new EnemyMap(level, 1);
             var trapMap = new TrapMap(level);
             var travelMap = Map.Sum(trapMap, WallMap);
@@ -41,7 +42,8 @@ namespace DummyPlayerBot
             else if (level.Monsters.Any())
             {
                 int i = 0;
-                path = travelMap.FindPath(level.Player.Location, level.Monsters.OrderBy(h => h.Location.Distance(level.Player.Location)).First().Location);
+                path = travelMap.FindPath(level.Player.Location, level
+                    .Monsters.OrderBy(h => h.Location.Distance(level.Player.Location)).First().Location);
                 if (i > 10)
                 return Turn.None;           
                 messageReporter.ReportMessage("Far attack");

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using SpurRoguelike.Core;
 using SpurRoguelike.Core.Entities;
 using SpurRoguelike.Core.Primitives;
@@ -11,11 +12,14 @@ namespace SpurRoguelike
         public int GameComleted = 0;
         public int NowLevel = 0;
         public int NowGame = 0;
+        private Stopwatch watch;
 
         public NullIO(int firstSeed)
         {
             NowGame = firstSeed;
             Console.WriteLine($"Game has started: {NowGame}");
+            this.watch = new Stopwatch();
+            watch.Start();
         }
 
         public void RenderLevel(Level level)
@@ -23,11 +27,13 @@ namespace SpurRoguelike
 
         public void RenderGameEnd(bool isCompleted)
         {
+            watch.Stop();
             GameComleted += isCompleted ? 1 : 0;
             Console.WriteLine($"Game {(isCompleted ? "completed" : "fail")}!");
             NowGame++;
             NowLevel = 0;
             Console.WriteLine($"Game has started: {NowGame}");
+            watch.Start();
         }
 
         public void ReportMessage(string message)
@@ -39,8 +45,10 @@ namespace SpurRoguelike
         public void ReportLevelEnd()
         {
             LevelsCompleted++;
-            Console.WriteLine($"Level {NowLevel} done!");
+            watch.Stop();
+            Console.WriteLine($"Level {NowLevel} done! {watch.Elapsed.Seconds}");
             NowLevel++;
+            watch.Start();
         }
 
         public void ReportGameEnd()

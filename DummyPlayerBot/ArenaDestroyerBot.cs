@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,10 +13,17 @@ namespace DummyPlayerBot
 {
     public class ArenaDestroyerBot : IBot
     {
+        public Stopwatch Time { get; }
+        public int CriticalTime { get; set; }
+        public long RemaingDistance { get; set; }
+
         public ArenaDestroyerBot(LevelView level)
         {
             Enviroment = Enviroment.FromLevelView(level, 2);
             Exit = level.Field.GetCellsOfType(CellType.Exit).First();
+            CriticalTime = 100;
+            Time = new Stopwatch();
+            Time.Start();
         }
 
         public Enviroment Enviroment { get; set; }
@@ -41,6 +49,34 @@ namespace DummyPlayerBot
             {
                 var monster = level.Monsters.Where(m => m.Location.IsInRange(level.Player.Location, 1)).OrderBy(m => m.Health).First();
                 return Turn.Attack(monster.Location - level.Player.Location);
+            }
+            if (Time.ElapsedMilliseconds > CriticalTime && level.Monsters.Any() && false)
+            {
+                var enemy = level.Monsters.First().Location;
+                if (Math.Abs(enemy.Distance(level.Player.Location) - RemaingDistance) < 2)
+                {
+                    reporter.ReportMessage("Throtling!");
+                    Time.Restart();
+                    var goodPoints = enemy.Near(2).ToList();
+                    if (goodPoints.Count > 0)
+                    {
+                        var path = attackMap.FindPath(level.Player.Location, goodPoints.Skip(new Random().Next(0, goodPoints.Count)).First());
+                        if (path != null && path.Count >= 2)
+                        {
+                            return Turn.Step(path[1] - path[0]);
+                        }
+                    }
+                    var offset = (level.Monsters.First().Location - level.Player.Location).Normalize();
+                    if (Enviroment.WallMap.IsTravaible(level.Player.Location + offset))
+                    {
+                        return Turn.Step(offset);
+                    }
+                    else
+                    {
+                        return Turn.Step((StepDirection)new Random().Next(0, 4));
+                    }
+                }
+                RemaingDistance = enemy.Distance(level.Player.Location);
             }
             if (level.Monsters.Any() /*&& level.Monsters.First().Location.Distance(level.Player.Location) > 1*/)
             {

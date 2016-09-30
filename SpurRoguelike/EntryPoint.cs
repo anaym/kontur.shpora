@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Fclp;
 using SpurRoguelike.ConsoleGUI;
 using SpurRoguelike.ConsoleGUI.TextScreen;
@@ -24,6 +25,18 @@ namespace SpurRoguelike
                 .WithDescription("Player name");
 
             commandLineParser
+                .Setup(options => options.Random)
+                .As('r')
+                .SetDefault(false)
+                .WithDescription("Random seed?");
+
+            commandLineParser
+                .Setup(options => options.WaitKey)
+                .As('k')
+                .SetDefault(false)
+                .WithDescription("Wait key?");
+
+            commandLineParser
                 .Setup(options => options.PlayerController)
                 .As('c')
                 .WithDescription("Path to assembly containing player controller");
@@ -33,6 +46,12 @@ namespace SpurRoguelike
                 .As('s')
                 .SetDefault(0)
                 .WithDescription("Seed for level generation");
+
+            commandLineParser
+                .Setup(options => options.SeedInc)
+                .As('i')
+                .SetDefault(1)
+                .WithDescription("Seed inc");
 
             commandLineParser
                 .Setup(options => options.TestCount)
@@ -81,16 +100,26 @@ namespace SpurRoguelike
         private static void RunManyGames(GameOptions options)
         {
             NullIO io = new NullIO(options.Seed);
+            var cx = 0;
             for (int i = 0; i < options.TestCount; i++)
             {
-                var s = new Random().Next();
-                Console.WriteLine("S" + s);
+                int s = 0;
+                if (options.Random)
+                {
+                    s = new Random().Next();
+                    Console.WriteLine("S" + s);
+                }
+                else
+                {
+                    s = options.Seed + cx;
+                    cx += options.SeedInc;
+                }
                 RunOneGame(s, options.LevelCount, options.PlayerController, io);
             }
             Console.WriteLine($"Games: {io.GameComleted}/{options.TestCount} = {100*io.GameComleted/options.TestCount}");
             Console.WriteLine($"Level completed: {io.LevelsCompleted}/{options.TestCount*options.LevelCount} = {100*io.LevelsCompleted/(options.TestCount * options.LevelCount)}");
             File.AppendText("res.txt").WriteLine($"Games: {io.GameComleted}/{options.TestCount} = {100 * io.GameComleted / options.TestCount}\n"+ $"Level completed: {io.LevelsCompleted}/{options.TestCount * options.LevelCount} = {100 * io.LevelsCompleted / (options.TestCount * options.LevelCount)}");
-            //Console.ReadKey();
+            if (options.WaitKey) Console.ReadKey();
         }
 
         private static void RunOneGame(int seed, int count, string pc, NullIO io)
@@ -228,6 +257,9 @@ namespace SpurRoguelike
 
         private class GameOptions
         {
+            public bool WaitKey { get; set; }
+            public int SeedInc { get; set; }
+            public bool Random { get; set; }
             public int TestCount { get; set; }
 
             public string PlayerName { get; set; }
