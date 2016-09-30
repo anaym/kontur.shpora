@@ -16,9 +16,24 @@ namespace DummyPlayerBot.Maps
             {
                 for (int y = 0; y < Height; y++)
                 {
-                    var now = new Location(x, y);
-                    SetTravaible(x, y, !isObject(level, now));
-                    SetWeight(x, y, objects.Where(w => w.Distance(now) < radius).MaxOr(w => radius - w.Distance(now)));
+                    travable[x, y] = true;
+                }
+            }
+            foreach (var o in objects)
+            {
+                travable[o.X, o.Y] = false;
+                for (int x = -radius; x <= radius; x++)
+                {
+                    for (int y = -radius; y <= radius; y++)
+                    {
+                        var loc = o + new Offset(x, y);
+                        var d = loc.Distance(o);
+                        if (loc.X >= 0 && loc.X < Width && loc.Y >= 0 && loc.Y < Height && d < radius)
+                        {
+                            var newW = radius - d;
+                            weigthes[loc.X, loc.Y] = Math.Max(weigthes[loc.X, loc.Y], newW);
+                        }
+                    }
                 }
             }
         }

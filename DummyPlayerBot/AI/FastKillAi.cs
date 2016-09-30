@@ -66,7 +66,9 @@ namespace DummyPlayerBot.AI
                 path = leaveMap.FindPath(level.Player.Location, Exit);
             }
             //Thread.Sleep(50);
-            return Turn.Step(path[1] - path[0]);
+            if (path != null)
+                return Turn.Step(path[1] - path[0]);
+            return Turn.None;
         }
     }
 }

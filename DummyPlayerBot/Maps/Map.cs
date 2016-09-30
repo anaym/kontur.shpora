@@ -9,8 +9,8 @@ namespace DummyPlayerBot.Maps
 {
     public class Map
     {
-        private readonly long[,] weigthes;
-        private readonly bool[,] travable;
+        protected readonly long[,] weigthes;
+        protected readonly bool[,] travable;
 
         public int Multiplyer { get; set; }
 
