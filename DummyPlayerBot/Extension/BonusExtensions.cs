@@ -1,7 +1,7 @@
 ﻿using System;
 using SpurRoguelike.Core.Views;
 
-namespace DummyPlayerBot.AI
+namespace DummyPlayerBot.Extension
 {
     public static class BonusExtensions
     {

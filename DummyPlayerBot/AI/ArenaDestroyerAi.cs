@@ -13,6 +13,7 @@ namespace DummyPlayerBot.AI
         public int CriticalTime { get; set; }
         public long RemaingDistance { get; set; }
         public int CriticalPercentageInactivity => 40;
+        public bool CycleDetected { get; private set; }
 
         public int MonsterStartHp { get; }
 
@@ -49,7 +50,7 @@ namespace DummyPlayerBot.AI
                     var path = travelMap.FindPath(level.Player.Location,
                         level.HealthPacks.OrderBy(h => h.Location.Distance(level.Player.Location)).First().Location);
                     isAttack = false;
-                    return Turn.Step(path[1] - path[0]);
+                    return Turn.Step(path[1] - path[0]); //TODO: null ref exception;
                 }
             }
             //if (level.Items.Any(i => i.IsBetter(level.Player)))
@@ -65,11 +66,23 @@ namespace DummyPlayerBot.AI
             }
             if (level.Monsters.Any() /*&& level.Monsters.First().Location.Distance(level.Player.Location) > 1*/)
             {
-                var path = attackMap.FindPath(level.Player.Location, level.Monsters.OrderBy(h => h.Location.Distance(level.Player.Location)).First().Location);
-                isAttack = false;
-                if (path == null)
-                    return Turn.None;
-                return Turn.Step(path[1] - path[0]);
+                var target = level.Monsters.First().Location;
+                var targets = target
+                    .Near(3)
+                    .Where(
+                        p =>
+                            p.X >= 0 && p.Y >= 0 && p.X < Enviroment.TravelMap.Width &&
+                            p.Y < Enviroment.TravelMap.Height)
+                    .Where(p => Enviroment.TravelMap.IsTravaible(p))
+                    .OrderBy(p => p.Distance(target));
+
+                foreach (var location in targets)
+                {
+                    var path = attackMap.FindPath(level.Player.Location, location);
+                    isAttack = false;
+                    if (path != null && path.Count > 1)
+                        return Turn.Step(path[1] - path[0]);
+                }
             }
             if (!ExitIsClosed(level))
             {
@@ -82,6 +95,14 @@ namespace DummyPlayerBot.AI
             }
             isAttack = false;
             return Turn.None;
+        }
+
+        public Turn HandleCycle(LevelView level)
+        {
+            if (!level.Monsters.Any())
+                return null;
+            CycleDetected = true;
+            return null;
         }
 
         public bool ExitIsClosed(LevelView level)

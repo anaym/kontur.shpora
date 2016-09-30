@@ -56,5 +56,7 @@ namespace DummyPlayerBot.AI
             }
             return  Turn.None;
         }
+
+        public Turn HandleCycle(LevelView level) => null;
     }
 }

@@ -81,6 +81,9 @@ namespace DummyPlayerBot
                             messageReporter.ReportMessage("A");
                             return Turn.Attack(levelView.Monsters.First(m => m.Location.IsInRange(levelView.Player.Location, 1)).Location - levelView.Player.Location);
                         }
+                        var solve = Ai.HandleCycle(levelView);
+                        if (solve != null)
+                            return solve;
                         return Turn.Step((StepDirection)new Random().Next(0, 4));
                     } 
                 }

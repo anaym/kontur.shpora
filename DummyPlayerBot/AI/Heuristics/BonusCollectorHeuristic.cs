@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using DummyPlayerBot.Extension;
 using DummyPlayerBot.Maps;
 using SpurRoguelike.Core.Primitives;
 using SpurRoguelike.Core.Views;

@@ -70,5 +70,7 @@ namespace DummyPlayerBot.AI
                 return Turn.Step(path[1] - path[0]);
             return Turn.None;
         }
+
+        public Turn HandleCycle(LevelView level) => null;
     }
 }

@@ -8,5 +8,6 @@ namespace DummyPlayerBot.AI
         int CriticalPercentageInactivity { get; }
         Location Exit { get; }
         Turn Iteration(LevelView level, IMessageReporter reporter, out bool isAttack);
+        Turn HandleCycle(LevelView level);
     }
 }
