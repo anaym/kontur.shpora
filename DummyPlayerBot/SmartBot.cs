@@ -10,6 +10,7 @@ namespace DummyPlayerBot
 {
     public class SmartBot : IBot
     {
+        public int CriticalPercentageInactivity => 40;
         public Location Exit { get; }
         public Location Input { get; }
         public readonly int Index;
@@ -25,8 +26,9 @@ namespace DummyPlayerBot
             Index = levelIndex;
         }
 
-        public Turn Iteration(LevelView level, IMessageReporter reporter)
+        public Turn Iteration(LevelView level, IMessageReporter reporter, out bool isAttack)
         {
+            isAttack = false;
             if (Index == 100500)
                 Thread.Sleep(100);
             Enviroment.Update(level, 3);
@@ -47,6 +49,7 @@ namespace DummyPlayerBot
                     {
                         if (level.Monsters.Any(m => m.Location.IsInRange(level.Player.Location, 1)))
                         {
+                            isAttack = true;
                             return Turn.Attack(level.Monsters.First(m => m.Location.IsInRange(level.Player.Location, 1)).Location - level.Player.Location);
                         }
 
@@ -69,7 +72,13 @@ namespace DummyPlayerBot
                 var path = map.FindPath(level.Player.Location, spot + new Offset(1, 0));
                 if (path == null)
                     if (level.Monsters.Any(m => m.Location.IsInRange(level.Player.Location, 1)))
-                        return Turn.Attack(level.Monsters.First(m => m.Location.IsInRange(level.Player.Location, 1)).Location - level.Player.Location);
+                    {
+                        isAttack = true;
+                        return
+                            Turn.Attack(
+                                level.Monsters.First(m => m.Location.IsInRange(level.Player.Location, 1)).Location -
+                                level.Player.Location);
+                    }
                     else
                         return Turn.None;
                 return Turn.Step(path[1] - path[0]);
@@ -84,6 +93,7 @@ namespace DummyPlayerBot
             if (level.Monsters.Any(m => m.Location.IsInRange(level.Player.Location, 1)))
             {
                 var monster = level.Monsters.Where(m => m.Location.IsInRange(level.Player.Location, 1)).OrderBy(m => m.Health).First();
+                isAttack = true;
                 return Turn.Attack(monster.Location - level.Player.Location);
             }
             if (level.Monsters.Any())
@@ -102,6 +112,7 @@ namespace DummyPlayerBot
                     {
                         if (level.Monsters.Any(m => m.Location.IsInRange(level.Player.Location, 1)))
                         {
+                            isAttack = true;
                             return Turn.Attack(level.Monsters.First(m => m.Location.IsInRange(level.Player.Location, 1)).Location - level.Player.Location);
                         }
 

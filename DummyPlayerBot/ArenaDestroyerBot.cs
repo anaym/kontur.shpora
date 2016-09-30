@@ -16,6 +16,7 @@ namespace DummyPlayerBot
         public Stopwatch Time { get; }
         public int CriticalTime { get; set; }
         public long RemaingDistance { get; set; }
+        public int CriticalPercentageInactivity => 40;
 
         public ArenaDestroyerBot(LevelView level)
         {
@@ -29,7 +30,7 @@ namespace DummyPlayerBot
         public Enviroment Enviroment { get; set; }
 
         public Location Exit { get; }
-        public Turn Iteration(LevelView level, IMessageReporter reporter)
+        public Turn Iteration(LevelView level, IMessageReporter reporter, out bool isAttack)
         {
             Enviroment.Update(level, 3);
             var bonusIgnore = new BadObjectMap(level, (view, location) => level.Items.Any(i => i.Location.Equals(location)), view => level.Items.Select(i => i.Location), 1);
@@ -38,6 +39,7 @@ namespace DummyPlayerBot
             if (level.Player.Health < 50 && level.HealthPacks.Any())
             {
                 var path = travelMap.FindPath(level.Player.Location, level.HealthPacks.OrderBy(h => h.Location.Distance(level.Player.Location)).First().Location);
+                isAttack = false;
                 return Turn.Step(path[1] - path[0]);
             }
             //if (level.Items.Any(i => i.IsBetter(level.Player)))
@@ -48,39 +50,13 @@ namespace DummyPlayerBot
             if (level.Monsters.Any(m => m.Location.IsInRange(level.Player.Location, 1)))
             {
                 var monster = level.Monsters.Where(m => m.Location.IsInRange(level.Player.Location, 1)).OrderBy(m => m.Health).First();
+                isAttack = true;
                 return Turn.Attack(monster.Location - level.Player.Location);
-            }
-            if (Time.ElapsedMilliseconds > CriticalTime && level.Monsters.Any() && false)
-            {
-                var enemy = level.Monsters.First().Location;
-                if (Math.Abs(enemy.Distance(level.Player.Location) - RemaingDistance) < 2)
-                {
-                    reporter.ReportMessage("Throtling!");
-                    Time.Restart();
-                    var goodPoints = enemy.Near(2).ToList();
-                    if (goodPoints.Count > 0)
-                    {
-                        var path = attackMap.FindPath(level.Player.Location, goodPoints.Skip(new Random().Next(0, goodPoints.Count)).First());
-                        if (path != null && path.Count >= 2)
-                        {
-                            return Turn.Step(path[1] - path[0]);
-                        }
-                    }
-                    var offset = (level.Monsters.First().Location - level.Player.Location).Normalize();
-                    if (Enviroment.WallMap.IsTravaible(level.Player.Location + offset))
-                    {
-                        return Turn.Step(offset);
-                    }
-                    else
-                    {
-                        return Turn.Step((StepDirection)new Random().Next(0, 4));
-                    }
-                }
-                RemaingDistance = enemy.Distance(level.Player.Location);
             }
             if (level.Monsters.Any() /*&& level.Monsters.First().Location.Distance(level.Player.Location) > 1*/)
             {
                 var path = attackMap.FindPath(level.Player.Location, level.Monsters.OrderBy(h => h.Location.Distance(level.Player.Location)).First().Location);
+                isAttack = false;
                 if (path == null)
                     return Turn.None;
                 return Turn.Step(path[1] - path[0]);
@@ -89,10 +65,12 @@ namespace DummyPlayerBot
             {
                 Enviroment = Enviroment.FromLevelView(level, 2);
                 var path = travelMap.FindPath(level.Player.Location, Exit);
+                isAttack = false;
                 if (path == null)
                     return Turn.None;
                 return Turn.Step(path[1] - path[0]);
             }
+            isAttack = false;
             return Turn.None;
         }
 

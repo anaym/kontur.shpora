@@ -11,6 +11,7 @@ namespace DummyPlayerBot
 {
     public class FastKillBot : IBot
     {
+        public int CriticalPercentageInactivity => 10;
         public Location Exit { get; }
         public WallMap WallMap;
         public ItemView BestItem(LevelView level) => level.Items.OrderByDescending(i => Math.Max(i.AttackBonus, i.DefenceBonus)).ThenByDescending(i => i.AttackBonus + i.DefenceBonus).First();
@@ -21,8 +22,9 @@ namespace DummyPlayerBot
             WallMap = new WallMap(level, 2);
         }
 
-        public Turn Iteration(LevelView level, IMessageReporter messageReporter)
+        public Turn Iteration(LevelView level, IMessageReporter messageReporter, out bool isAttack)
         {
+            isAttack = false;
             //Thread.Sleep(100);
             var monsterMap = new EnemyMap(level, 1);
             var trapMap = new TrapMap(level);
@@ -37,6 +39,7 @@ namespace DummyPlayerBot
             else if (level.Monsters.Any(m => m.Location.IsInRange(level.Player.Location, 1)))
             {
                 messageReporter.ReportMessage("Attack");
+                isAttack = false;
                 return Turn.Attack(level.Monsters.First(m => m.Location.IsInRange(level.Player.Location, 1)).Location - level.Player.Location);
             }
             else if (level.Monsters.Any())

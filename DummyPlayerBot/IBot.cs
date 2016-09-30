@@ -5,7 +5,8 @@ namespace DummyPlayerBot
 {
     public interface IBot
     {
+        int CriticalPercentageInactivity { get; }
         Location Exit { get; }
-        Turn Iteration(LevelView level, IMessageReporter reporter);
+        Turn Iteration(LevelView level, IMessageReporter reporter, out bool isAttack);
     }
 }
