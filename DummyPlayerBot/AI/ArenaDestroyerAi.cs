@@ -11,10 +11,8 @@ namespace DummyPlayerBot.AI
     {
         public Stopwatch Time { get; }
         public int CriticalTime { get; set; }
-        public long RemaingDistance { get; set; }
         public int CriticalPercentageInactivity => 40;
         public bool CycleDetected { get; private set; }
-
         public int MonsterStartHp { get; }
 
         public ArenaDestroyerAi(LevelView level)
@@ -50,21 +48,19 @@ namespace DummyPlayerBot.AI
                     var path = travelMap.FindPath(level.Player.Location,
                         level.HealthPacks.OrderBy(h => h.Location.Distance(level.Player.Location)).First().Location);
                     isAttack = false;
-                    return Turn.Step(path[1] - path[0]); //TODO: null ref exception;
+                    if (path != null && path.Count > 1)
+                        return Turn.Step(path[1] - path[0]);
+                    return Turn.None;
                 }
             }
-            //if (level.Items.Any(i => i.IsBetter(level.Player)))
-            //{
-            //    var path = travelMap.FindPath(level.Player.Location, level.Items.First(i => i.IsBetter(level.Player)).Location);
-            //    return Turn.Step(path[1] - path[0]);
-            //}
+
             if (level.Monsters.Any(m => m.Location.IsInRange(level.Player.Location, 1)))
             {
                 var monster = level.Monsters.Where(m => m.Location.IsInRange(level.Player.Location, 1)).OrderBy(m => m.Health).First();
                 isAttack = true;
                 return Turn.Attack(monster.Location - level.Player.Location);
             }
-            if (level.Monsters.Any() /*&& level.Monsters.First().Location.Distance(level.Player.Location) > 1*/)
+            if (level.Monsters.Any())
             {
                 var target = level.Monsters.First().Location;
                 var targets = target
@@ -89,7 +85,7 @@ namespace DummyPlayerBot.AI
                 Enviroment = new Enviroment(level, 2);
                 var path = travelMap.FindPath(level.Player.Location, Exit);
                 isAttack = false;
-                if (path == null)
+                if (path == null || path.Count < 2)
                     return Turn.None;
                 return Turn.Step(path[1] - path[0]);
             }

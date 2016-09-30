@@ -24,7 +24,6 @@ namespace DummyPlayerBot.AI
         public Turn Iteration(LevelView level, IMessageReporter messageReporter, out bool isAttack)
         {
             isAttack = false;
-            //Thread.Sleep(100);
             var monsterMap = new EnemyMap(level, 1);
             var trapMap = new TrapMap(level);
             var travelMap = Map.Sum(trapMap, WallMap);
@@ -65,7 +64,6 @@ namespace DummyPlayerBot.AI
                 var leaveMap  = Map.Sum(travelMap, new BadObjectMap(level, (view, location) => level.Items.Any(i => i.Location.Equals(location)), view => level.Items.Select(i => i.Location), 1));
                 path = leaveMap.FindPath(level.Player.Location, Exit);
             }
-            //Thread.Sleep(50);
             if (path != null)
                 return Turn.Step(path[1] - path[0]);
             return Turn.None;

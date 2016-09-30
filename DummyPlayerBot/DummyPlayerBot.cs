@@ -13,10 +13,6 @@ using SpurRoguelike.Core;
 using SpurRoguelike.Core.Primitives;
 using SpurRoguelike.Core.Views;
 
-//TODO: присоедениться к чату в телеграме
-//TODO: понять логику движения врагов
-//TODO: написать небольшую графовую библиотеку и внедрить её
-
 namespace DummyPlayerBot
 {
     public class DummyPlayerBot : IPlayerController
@@ -27,7 +23,7 @@ namespace DummyPlayerBot
         public int MonsterCount;
 
         private Queue<Location> history;
-        private int historySize;
+        private readonly int historySize;
 
         public DummyPlayerBot()
         {
@@ -62,8 +58,7 @@ namespace DummyPlayerBot
                 history = new Queue<Location>(historySize);
             }
             MonsterCount = levelView.Monsters.Count();
-            //if (LevelIndex == 2)
-                //Thread.Sleep(200);
+
             var isAttack = false;
             var action =  Ai.Iteration(levelView, messageReporter, out isAttack);
             if (!isAttack)
@@ -94,7 +89,7 @@ namespace DummyPlayerBot
         private static bool IsLastLevel(LevelView level)
         {
             var exit = level.Field.GetCellsOfType(CellType.Exit).First();
-            var neir = new Location[] {exit.Up(), exit.Down(), exit.Left(), exit.Right()};
+            var neir = new [] {exit.Up(), exit.Down(), exit.Left(), exit.Right()};
             return neir.All(p => level.Field[p] == CellType.Wall);
         }
     }

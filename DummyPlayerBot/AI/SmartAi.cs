@@ -41,8 +41,6 @@ namespace DummyPlayerBot.AI
         public Turn Iteration(LevelView level, IMessageReporter reporter, out bool isAttack)
         {
             isAttack = false;
-            if (Index == 211)
-                Thread.Sleep(150);
             Enviroment.Update(level, 3);
             var bonusIgnore = new BadObjectMap(level, (view, location) => level.Items.Any(i => i.Location.Equals(location)), view => level.Items.Select(i => i.Location), 1);
             var attackMap = Map.Sum(Enviroment.WallMap, Enviroment.TrapMap, bonusIgnore);

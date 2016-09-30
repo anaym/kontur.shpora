@@ -18,8 +18,7 @@ namespace DummyPlayerBot.AI.Heuristics
         public Turn Solve(LevelView level, Enviroment enviroment, out bool isAttack)
         {
             isAttack = false;
-            var minhp = MaxHp /*+ level.Monsters.Count(m => m.Location.IsInRange(level.Player.Location, 2)) * 3 - 3*/;//new
-            if (level.Player.Health < minhp && level.HealthPacks.Any())
+            if (level.Player.Health < MaxHp && level.HealthPacks.Any())
             {
                 enviroment.EnemyMap.Multiplyer = 2;
                 var map = Map.Sum(enviroment.TravelMap, enviroment.EnemyMap);
