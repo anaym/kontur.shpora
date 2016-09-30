@@ -22,12 +22,11 @@ namespace DummyPlayerBot.AI.Heuristics
             {
                 enviroment.EnemyMap.Multiplyer = 2;
                 var map = Map.Sum(enviroment.TravelMap, enviroment.EnemyMap);
-                enviroment.EnemyMap.Multiplyer = 2;
 
                 foreach (var hp in level.HealthPacks.OrderBy(h => h.Location.Distance(level.Player.Location)))
                 {
                     var path = map.FindPath(level.Player.Location, hp.Location);
-                    if (path == null)
+                    if (path == null) //бывают ситуации, когда полуживой монстр закрывает на проход к аптечкам. Добиваем его (раз нет других вариантов)
                     {
                         if (level.Monsters.Any(m => m.Location.IsInRange(level.Player.Location, 1)))
                         {

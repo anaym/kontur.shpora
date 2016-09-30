@@ -7,6 +7,8 @@ using LinqExtention = DummyPlayerBot.Extension.LinqExtention;
 
 namespace DummyPlayerBot.Maps
 {
+
+    //mutable collection. Мог бы сделать immutable, но особого выигрыша в скорости от этого небыло бы
     public class Map
     {
         protected readonly long[,] weigthes;
@@ -54,6 +56,12 @@ namespace DummyPlayerBot.Maps
         public int Width => weigthes.GetLength(0);
         public int Height => weigthes.GetLength(1);
 
+        /// <summary>
+        /// Поиск кратчайшего пути алгоритмом Дейкстры
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
         public List<Location> FindPath(Location start, Location end)
         {
             var data = new Dictionary<Location, DijkstraData> { { start, new DijkstraData(null, 0) } };
@@ -125,11 +133,7 @@ namespace DummyPlayerBot.Maps
             {
                 for (int y = 0; y < res.Height; y++)
                 {
-                    res.SetWeight(x, y, input.Sum(m =>
-                    {
-                        return m.GetWeight(x, y);
-
-                    }));
+                    res.SetWeight(x, y, input.Sum(m => m.GetWeight(x, y)));
                     res.SetTravaible(x, y, input.All(m => m.IsTravaible(x, y)));
                 }
             }

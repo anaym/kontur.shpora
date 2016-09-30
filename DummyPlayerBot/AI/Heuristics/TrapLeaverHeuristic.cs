@@ -11,14 +11,13 @@ namespace DummyPlayerBot.AI.Heuristics
         public Turn Solve(LevelView level, Enviroment enviroment, out bool isAttack)
         {
             isAttack = false;
-            //если рядом много ботов и резко выросла стоимость дойти до аптечки - trap - убегаем
+            //если монстры атакуют более чем двумя - убегаем на другой конец карты
             if (level.Monsters.Count(m => m.Location.IsInRange(level.Player.Location, 1)) > 1 && level.Monsters.Count() > 2)
             {
                 enviroment.EnemyMap.Multiplyer = 2;
                 var map = Map.Sum(enviroment.TravelMap, enviroment.EnemyMap);
-                enviroment.EnemyMap.Multiplyer = 2;
                 var spot = new[] { enviroment.Exit, enviroment.Start }.OrderByDescending(s => s.Distance(level.Player.Location)).First();
-                var target = spot + new Offset(1, 0);
+                var target = spot.Near().Where(p => enviroment.TravelMap.IsTravaible(p)).OrderBy(p => p.Distance(level.Player.Location)).First(); //эта клетка вроде всегда свободна
                 var near =
                     level.Player.Location.Near()
                         .Where(p => map.IsTravaible(p) && enviroment.WallMap.GetWeight(p) < 2)
