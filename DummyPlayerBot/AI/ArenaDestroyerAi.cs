@@ -14,6 +14,8 @@ namespace DummyPlayerBot.AI
         public long RemaingDistance { get; set; }
         public int CriticalPercentageInactivity => 40;
 
+        public int MonsterStartHp { get; }
+
         public ArenaDestroyerAi(LevelView level)
         {
             Enviroment = new Enviroment(level, 2);
@@ -21,6 +23,9 @@ namespace DummyPlayerBot.AI
             CriticalTime = 100;
             Time = new Stopwatch();
             Time.Start();
+
+            if (level.Monsters.Any())
+                MonsterStartHp = level.Monsters.First().Health;
         }
 
         public Enviroment Enviroment { get; set; }
@@ -32,11 +37,20 @@ namespace DummyPlayerBot.AI
             var bonusIgnore = new BadObjectMap(level, (view, location) => level.Items.Any(i => i.Location.Equals(location)), view => level.Items.Select(i => i.Location), 1);
             var attackMap = Map.Sum(Enviroment.WallMap, Enviroment.TrapMap, bonusIgnore);
             var travelMap = Map.Sum(attackMap, Enviroment.EnemyMap, bonusIgnore);
-            if (level.Player.Health < 50 && level.HealthPacks.Any())
+            if (level.Monsters.Any())
             {
-                var path = travelMap.FindPath(level.Player.Location, level.HealthPacks.OrderBy(h => h.Location.Distance(level.Player.Location)).First().Location);
-                isAttack = false;
-                return Turn.Step(path[1] - path[0]);
+                var monster = level.Monsters.First();
+                var enemyHp = monster.Health;
+                var healingHpLevel = 50;
+                if (enemyHp < MonsterStartHp*0.6) //если враг пытается отрегениться - забираем его аптечку))
+                    healingHpLevel = 60;
+                if (level.Player.Health < healingHpLevel && level.HealthPacks.Any())
+                {
+                    var path = travelMap.FindPath(level.Player.Location,
+                        level.HealthPacks.OrderBy(h => h.Location.Distance(level.Player.Location)).First().Location);
+                    isAttack = false;
+                    return Turn.Step(path[1] - path[0]);
+                }
             }
             //if (level.Items.Any(i => i.IsBetter(level.Player)))
             //{
