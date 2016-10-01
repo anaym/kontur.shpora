@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Linq;
+using DummyPlayerBot.AI.Heuristics;
 using DummyPlayerBot.Extension;
 using DummyPlayerBot.Maps;
 using SpurRoguelike.Core.Primitives;
@@ -14,10 +15,16 @@ namespace DummyPlayerBot.AI
         public int CriticalPercentageInactivity => 40;
         public bool CycleDetected { get; private set; }
         public int MonsterStartHp { get; }
+        public bool TaskCompleted { get; private set; }
+        public Location Task { get; }
 
         public ArenaDestroyerAi(LevelView level)
         {
             Enviroment = new Enviroment(level, 2);
+            var enemy = level.Monsters.First();
+            Task = enemy.Location.Near(2).Where(l => Enviroment.WallMap.GetDistance(level.Player.Location, l) != null).OrderBy(l => enemy.Location.Distance(l)).FirstOr(new Location(-1, -1));
+            if (Task.X < 0)
+                TaskCompleted = true;
             Exit = level.Field.GetCellsOfType(CellType.Exit).First();
             CriticalTime = 100;
             Time = new Stopwatch();
@@ -36,12 +43,17 @@ namespace DummyPlayerBot.AI
             var bonusIgnore = new BadObjectMap(level, (view, location) => level.Items.Any(i => i.Location.Equals(location)), view => level.Items.Select(i => i.Location), 1);
             var attackMap = Map.Sum(Enviroment.WallMap, Enviroment.TrapMap, bonusIgnore);
             var travelMap = Map.Sum(attackMap, Enviroment.EnemyMap, bonusIgnore);
+            var s = new BonusCollectorHeuristic().Solve(level, new Enviroment(level), out isAttack);
+            if (s != null)
+                return s;
             if (level.Monsters.Any())
             {
                 var monster = level.Monsters.First();
                 var enemyHp = monster.Health;
                 var healingHpLevel = 50;
-                if (enemyHp < MonsterStartHp*0.6) //если враг пытается отрегениться - забираем его аптечку))
+                if (enemyHp < MonsterStartHp * 0.6 && level.HealthPacks.Count() < 4) //если враг пытается отрегениться - забираем его аптечку))
+                    healingHpLevel = 60;
+                if (enemyHp < MonsterStartHp*0.7) //если враг пытается отрегениться - забираем его аптечку))
                     healingHpLevel = 60;
                 if (level.Player.Health < healingHpLevel && level.HealthPacks.Any())
                 {
@@ -53,12 +65,23 @@ namespace DummyPlayerBot.AI
                     return Turn.None;
                 }
             }
-
+            isAttack = false;
             if (level.Monsters.Any(m => m.Location.IsInRange(level.Player.Location, 1)))
             {
                 var monster = level.Monsters.Where(m => m.Location.IsInRange(level.Player.Location, 1)).OrderBy(m => m.Health).First();
                 isAttack = true;
+                TaskCompleted = true;
                 return Turn.Attack(monster.Location - level.Player.Location);
+            }
+            if (level.Monsters.Any() && !TaskCompleted)
+            {
+                var path = Enviroment.AttackMap.FindPath(level.Player.Location, Task);
+                if (path != null && path.Count >= 2)
+                {
+                    return Turn.Step(path[1] - path[0]);
+                }
+                TaskCompleted = true;
+
             }
             if (level.Monsters.Any())
             {
@@ -75,7 +98,6 @@ namespace DummyPlayerBot.AI
                 foreach (var location in targets)
                 {
                     var path = attackMap.FindPath(level.Player.Location, location);
-                    isAttack = false;
                     if (path != null && path.Count > 1)
                         return Turn.Step(path[1] - path[0]);
                 }

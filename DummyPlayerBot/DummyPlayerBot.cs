@@ -70,7 +70,7 @@ namespace DummyPlayerBot
                     if (new HashSet<Location>(history).Count < (historySize*Ai.CriticalPercentageInactivity/100))
                     {
                         messageReporter.ReportMessage("T");
-                        history.Clear();
+                        //history.Clear();
                         if (levelView.Monsters.Any(m => m.Location.IsInRange(levelView.Player.Location, 1)))
                         {
                             messageReporter.ReportMessage("A");

@@ -29,7 +29,7 @@ namespace DummyPlayerBot.AI
             var travelMap = Map.Sum(trapMap, WallMap);
             var pathMap = Map.Sum(monsterMap, travelMap);
             List<Location> path = null;
-            if (level.Player.Health < 50 && level.HealthPacks.Any())
+            if ((level.Player.Health < 55 || level.Monsters.Count(m => m.Location.IsInRange(level.Player.Location, 1)) > 1) && level.HealthPacks.Any())
             {
                 path = pathMap.FindPath(level.Player.Location, level.HealthPacks.OrderBy(h => h.Location.Distance(level.Player.Location)).First().Location);
                 messageReporter.ReportMessage("Healing");
@@ -69,6 +69,21 @@ namespace DummyPlayerBot.AI
             return Turn.None;
         }
 
-        public Turn HandleCycle(LevelView level) => null;
+        public Turn HandleCycle(LevelView level)
+        {
+            if (level.HealthPacks.Any())
+            {
+                var env = new Enviroment(level);
+                env.Update(level);
+                foreach (var hp in level.HealthPacks.OrderBy(h => h.Location.Distance(level.Player.Location)))
+                {
+                    var path = env.TravelMap.FindPath(level.Player.Location, hp.Location);
+                    if (path != null && path.Count > 1)
+                        return Turn.Step(path[1] - path[0]);
+
+                }
+            }
+            return null;
+        }
     }
 }

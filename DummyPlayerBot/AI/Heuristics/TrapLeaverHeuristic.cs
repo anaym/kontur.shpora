@@ -12,16 +12,16 @@ namespace DummyPlayerBot.AI.Heuristics
         {
             isAttack = false;
             //если монстры атакуют более чем двумя - убегаем на другой конец карты
-            if (level.Monsters.Count(m => m.Location.IsInRange(level.Player.Location, 1)) > 1 && level.Monsters.Count() > 2)
+            if ((level.Monsters.Count(m => m.Location.IsInRange(level.Player.Location, 1)) > 1 || level.Monsters.Count(m => m.Location.IsInRange(level.Player.Location, 3)) > 4) && level.Monsters.Count() > 2)
             {
                 enviroment.EnemyMap.Multiplyer = 2;
                 var map = Map.Sum(enviroment.TravelMap, enviroment.EnemyMap);
                 var b = enviroment.Start;
                 var e = enviroment.Exit;
                 var spot = new[] { b, e, new Location(b.X, e.Y), new Location(e.X, b.Y) }
-                    .OrderByDescending(s => s.Distance(level.Player.Location))
-                    .Where(s => s.Near().Any(p => enviroment.TravelMap.IsTravaible(p)))
-                    .First();
+                    .OrderBy(t => level.Monsters.Count(m => m.Location.IsInRange(t, 4)))  
+                    //.ThenByDescending(s => s.Distance(level.Player.Location))
+                    .First(s => s.Near().Any(p => enviroment.TravelMap.IsTravaible(p)));
                 var target = spot.Near().Where(p => enviroment.TravelMap.IsTravaible(p)).OrderBy(p => p.Distance(level.Player.Location)).First(); //эта клетка вроде всегда свободна
                 var bwm = new WallMap(level, 7);
                 var near =
@@ -41,7 +41,7 @@ namespace DummyPlayerBot.AI.Heuristics
                 }
 
                 var path = map.FindPath(level.Player.Location, target);
-                if (path == null)
+                if (path == null || path.Count <= 1)
                     if (level.Monsters.Any(m => m.Location.IsInRange(level.Player.Location, 1)))
                     {
                         isAttack = true;

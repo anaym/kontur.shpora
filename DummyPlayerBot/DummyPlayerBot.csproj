@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\ArenaDestroyerAi.cs" />
+    <Compile Include="AI\Heuristics\NearHealingHeuristic.cs" />
     <Compile Include="Extension\BonusExtensions.cs" />
     <Compile Include="AI\Heuristics\BonusCollectorHeuristic.cs" />
     <Compile Include="AI\Heuristics\FarAttackHeuristic.cs" />

@@ -31,8 +31,8 @@ namespace DummyPlayerBot.Maps
                         if (loc.X >= 0 && loc.X < Width && loc.Y >= 0 && loc.Y < Height && d < radius)
                         {
                             var newW = radius - d;
-                            if (x == 0 && y == 0)
-                                newW += newW/2;
+                            /*if (x == 0 && y == 0)
+                                newW += newW/2;*/
                             weigthes[loc.X, loc.Y] = Math.Max(weigthes[loc.X, loc.Y], newW);
                         }
                     }
