@@ -28,6 +28,7 @@ namespace DummyPlayerBot.AI
             Index = levelIndex;
 
             Heuristics = new List<IHeuristic>();
+            Heuristics.Add(new NearHealingHeuristic(50)); //20
             Heuristics.Add(new HealingHeuristic(40)); //20
             Heuristics.Add(new TrapLeaverHeuristic());
             Heuristics.Add(new HealingHeuristic(50));

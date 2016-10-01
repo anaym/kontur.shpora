@@ -8,19 +8,27 @@ using LinqExtention = DummyPlayerBot.Extension.LinqExtention;
 namespace DummyPlayerBot.Maps
 {
 
-    //mutable collection. Мог бы сделать immutable, но особого выигрыша в скорости от этого небыло бы
+    //immutable collection. Это позволило ускорить нахождение пути за счет кэширования
     public class Map
     {
         protected readonly long[,] weigthes;
         protected readonly bool[,] travable;
+        private Dictionary<Location, Dictionary<Location, DijkstraData>> cache;
 
         public int Multiplyer { get; set; }
 
-        public Map(int width, int height)
+        protected Map(int width, int heigth)
         {
-            weigthes = new long[width,height];
-            travable = new bool[width,height];
+            weigthes = new long[width, heigth];
+            travable = new bool[width, heigth];
+            cache = new Dictionary<Location, Dictionary<Location, DijkstraData>>();
             Multiplyer = 1;
+        }
+
+        public Map(long[, ] weigthes, bool[, ] travable) : this(weigthes.GetLength(0), weigthes.GetLength(1))
+        {
+            this.weigthes = weigthes; //TODO: можно изменить исзодный массив, по-хорошему - копироваьб, так же могут не совпадать размерности массивов
+            this.travable = travable;
         }
 
         public long GetWeight(int x, int y)
@@ -30,42 +38,33 @@ namespace DummyPlayerBot.Maps
 
         public long GetWeight(Location pos) => GetWeight(pos.X, pos.Y);
 
-        public void SetWeight(int x, int y, long value)
-        {
-            if (value < 0)
-                throw new ArgumentOutOfRangeException("Weight must be a positive!");
-            weigthes[x, y] = value;
-        }
-
-        public void SetWeight(Location pos, long value) => SetWeight(pos.X, pos.Y, value);
-
         public bool IsTravaible(int x, int y)
         {
+            if (x < 0 || y < 0 || x >= Width || y >= Height)
+                return false;
             return travable[x, y];
         }
 
         public bool IsTravaible(Location pos) => IsTravaible(pos.X, pos.Y);
 
-        public void SetTravaible(int x, int y, bool status)
-        {
-            travable[x, y] = status;
-        }
-
-        public void SetTravaible(Location pos, bool status) => SetTravaible(pos.X, pos.Y, status);
-
         public int Width => weigthes.GetLength(0);
         public int Height => weigthes.GetLength(1);
 
         /// <summary>
-        /// Поиск кратчайшего пути алгоритмом Дейкстры
+        /// Статистика для поиска кратчайшего пути алгоритмом Дейкстры
         /// </summary>
         /// <param name="start"></param>
         /// <param name="end"></param>
         /// <returns></returns>
-        public List<Location> FindPath(Location start, Location end)
+        public Dictionary<Location, DijkstraData> GetStatistic(Location point)
         {
-            var data = new Dictionary<Location, DijkstraData> { { start, new DijkstraData(null, 0) } };
-            var notOpenned = new List<Location> { start };
+            if (cache.ContainsKey(point) && cache[point] != null)
+            {
+                return cache[point];
+            }
+
+            var data = new Dictionary<Location, DijkstraData> { { point, new DijkstraData(null, 0) } };
+            var notOpenned = new List<Location> { point };
             while (true)
             {
                 Location mink = new Location();
@@ -80,7 +79,7 @@ namespace DummyPlayerBot.Maps
                         mink = key;
                         exist = true;
                     }
-                    
+
                 }
                 if (!exist)
                     break;
@@ -106,16 +105,35 @@ namespace DummyPlayerBot.Maps
                 notOpenned.Remove(now);
                 data[now].Oppened = true;
             }
-            if (!data.ContainsKey(end)) return null;
+            cache.Add(point, data);
+            return data;
+        }
+
+        public List<Location> FindPath(Dictionary<Location, DijkstraData> statistic, Location end)
+        {
+            if (!statistic.ContainsKey(end)) return null;
             var path = new List<Location> { end };
-            var position = data[end];
+            var position = statistic[end];
             while (position.From != null)
             {
                 path.Add(position.From ?? new Location(0, 0));
-                position = data[position.From ?? new Location(0, 0)];
+                position = statistic[position.From ?? new Location(0, 0)];
             }
             path.Reverse();
             return path;
+        }
+
+        public long? GetDistance(Location start, Location end)
+        {
+            var sts = GetStatistic(start);
+            if (!sts.ContainsKey(end))
+                return null;
+            return sts[end].Cost;
+        }
+
+        public List<Location> FindPath(Location start, Location end)
+        {
+            return FindPath(GetStatistic(start), end);
         }
 
         private IEnumerable<Location> GetNearest(Location pos)
@@ -128,22 +146,23 @@ namespace DummyPlayerBot.Maps
         public static Map Sum(IEnumerable<Map> maps)
         {
             var input = maps.ToList();
-            var res = new Map(input[0].Width, input[0].Height);
-            for (int x = 0; x < res.Width; x++)
+            var wghts = new long[input[0].Width, input[0].Height];
+            var trvbls = new bool[input[0].Width, input[0].Height];
+            for (int x = 0; x < input[0].Width; x++)
             {
-                for (int y = 0; y < res.Height; y++)
+                for (int y = 0; y < input[0].Height; y++)
                 {
-                    res.SetWeight(x, y, input.Sum(m => m.GetWeight(x, y)));
-                    res.SetTravaible(x, y, input.All(m => m.IsTravaible(x, y)));
+                    wghts[x, y] = input.Sum(m => m.GetWeight(x, y));
+                    trvbls[x, y] = input.All(m => m.IsTravaible(x, y));
                 }
             }
-            return res;
+            return new Map(wghts, trvbls);
         }
 
         public static Map Sum(params Map[] maps) => Sum(maps.Select(o => o));
     }
 
-    internal class DijkstraData
+    public class DijkstraData
     {
         public DijkstraData(Location? from, long cost)
         {

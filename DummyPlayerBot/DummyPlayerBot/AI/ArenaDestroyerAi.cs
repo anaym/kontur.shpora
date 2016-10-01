@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Linq;
+﻿using System.Linq;
 using DummyPlayerBot.Extension;
 using DummyPlayerBot.Maps;
 using SpurRoguelike.Core.Primitives;
@@ -9,10 +8,8 @@ namespace DummyPlayerBot.AI
 {
     public class ArenaDestroyerAi : IAi
     {
-        public Stopwatch Time { get; }
         public int CriticalTime { get; set; }
         public int CriticalPercentageInactivity => 40;
-        public bool CycleDetected { get; private set; }
         public int MonsterStartHp { get; }
 
         public ArenaDestroyerAi(LevelView level)
@@ -20,8 +17,6 @@ namespace DummyPlayerBot.AI
             Enviroment = new Enviroment(level, 2);
             Exit = level.Field.GetCellsOfType(CellType.Exit).First();
             CriticalTime = 100;
-            Time = new Stopwatch();
-            Time.Start();
 
             if (level.Monsters.Any())
                 MonsterStartHp = level.Monsters.First().Health;
@@ -93,18 +88,12 @@ namespace DummyPlayerBot.AI
             return Turn.None;
         }
 
-        public Turn HandleCycle(LevelView level)
-        {
-            if (!level.Monsters.Any())
-                return null;
-            CycleDetected = true;
-            return null;
-        }
+        public Turn HandleCycle(LevelView level) => null;
 
         public bool ExitIsClosed(LevelView level)
         {
             var exit = level.Field.GetCellsOfType(CellType.Exit).First();
-            var neir = new Location[] { exit.Up(), exit.Down(), exit.Left(), exit.Right() };
+            var neir = new [] { exit.Up(), exit.Down(), exit.Left(), exit.Right() };
             return neir.All(p => level.Field[p] == CellType.Wall);
         }
     }

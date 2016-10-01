@@ -12,7 +12,7 @@ namespace DummyPlayerBot.AI.Heuristics
             isAttack = false;
             if (level.Monsters.Any())
             {
-                var path = enviroment.AttackMap.FindPath(level.Player.Location, level.Monsters.OrderBy(h => h.Location.Distance(level.Player.Location)).First().Location);
+                var path = enviroment.AttackMap.FindPath(level.Player.Location, level.Monsters.OrderBy(h => enviroment.TravelMap.GetDistance(level.Player.Location, h.Location)).First().Location);
                 if (path == null)
                     return Turn.None;
                 return Turn.Step(path[1] - path[0]);
