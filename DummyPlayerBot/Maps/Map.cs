@@ -41,6 +41,8 @@ namespace DummyPlayerBot.Maps
 
         public bool IsTravaible(int x, int y)
         {
+            if (x < 0 || y < 0 || x >= Width || y >= Width)
+                return false;
             return travable[x, y];
         }
 

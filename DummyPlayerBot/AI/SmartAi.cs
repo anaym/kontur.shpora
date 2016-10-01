@@ -28,7 +28,8 @@ namespace DummyPlayerBot.AI
             Index = levelIndex;
 
             Heuristics = new List<IHeuristic>();
-            Heuristics.Add(new HealingHeuristic(40)); //20
+            Heuristics.Add(new HealingHeuristic(30)); //20
+            Heuristics.Add(new HealingHeuristic(40, false)); //20
             Heuristics.Add(new TrapLeaverHeuristic());
             Heuristics.Add(new HealingHeuristic(50));
             Heuristics.Add(new BonusCollectorHeuristic());
@@ -40,6 +41,9 @@ namespace DummyPlayerBot.AI
 
         public Turn Iteration(LevelView level, IMessageReporter reporter, out bool isAttack)
         {
+            if (Index == 211)
+                Thread.Sleep(50);
+
             isAttack = false;
             Enviroment.Update(level, 3);
             var bonusIgnore = new BadObjectMap(level, (view, location) => level.Items.Any(i => i.Location.Equals(location)), view => level.Items.Select(i => i.Location), 1);
@@ -50,7 +54,10 @@ namespace DummyPlayerBot.AI
             {
                 var solve = heuristic.Solve(level, Enviroment, out isAttack);
                 if (solve != null)
+                {
+                    reporter.ReportMessage(heuristic.GetType().Name + " " + level.Player.Health);
                     return solve;
+                }
             }
             return  Turn.None;
         }

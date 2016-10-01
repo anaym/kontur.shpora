@@ -16,11 +16,17 @@ namespace DummyPlayerBot.AI.Heuristics
             {
                 enviroment.EnemyMap.Multiplyer = 2;
                 var map = Map.Sum(enviroment.TravelMap, enviroment.EnemyMap);
-                var spot = new[] { enviroment.Exit, enviroment.Start }.OrderByDescending(s => s.Distance(level.Player.Location)).First();
+                var b = enviroment.Start;
+                var e = enviroment.Exit;
+                var spot = new[] { b, e, new Location(b.X, e.Y), new Location(e.X, b.Y) }
+                    .OrderByDescending(s => s.Distance(level.Player.Location))
+                    .Where(s => s.Near().Any(p => enviroment.TravelMap.IsTravaible(p)))
+                    .First();
                 var target = spot.Near().Where(p => enviroment.TravelMap.IsTravaible(p)).OrderBy(p => p.Distance(level.Player.Location)).First(); //эта клетка вроде всегда свободна
+                var bwm = new WallMap(level, 7);
                 var near =
                     level.Player.Location.Near()
-                        .Where(p => map.IsTravaible(p) && enviroment.WallMap.GetWeight(p) < 2)
+                        .Where(p => map.IsTravaible(p) && bwm.GetWeight(p) < 2)
                         .OrderBy(p => level.Monsters.Count(m => m.Location.IsInRange(p, 1)));
 
                 foreach (var location in near)//new
